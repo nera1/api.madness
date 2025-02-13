@@ -12,7 +12,7 @@ public class RootController {
     @GetMapping("/")
     public ResponseEntity<Map<String, String>> root() {
         Map<String, String> response = new HashMap<>();
-        response.put("message", "Madness API");
+        response.put("msg", "Madness API");
         return ResponseEntity.ok(response);
     }
 }
