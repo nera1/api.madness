@@ -21,6 +21,13 @@ jobs:
           export PATH="$HOME/.fly/bin:$PATH"
           flyctl version
 
+      - name: Check if Fly.io API Token is set
+        run: |
+          if [[ -z "${{ secrets.FLY_API_TOKEN }}" ]]; then
+            echo "❌ ERROR: FLY_API_TOKEN is not set in GitHub Secrets. Exiting."
+            exit 1
+          fi
+
       - name: Authenticate with Fly.io
         run: flyctl auth docker --access-token "${{ secrets.FLY_API_TOKEN }}"
 
@@ -33,4 +40,4 @@ jobs:
           docker push registry.fly.io/${{ secrets.FLY_APP_NAME }}:latest
 
       - name: Deploy to Fly.io
-        run: flyctl deploy --image registry.fly.io/${{ secrets.FLY_APP_NAME }}:latest --strategy immediate
+        run: flyctl deploy --image registry.fly.io/${{ secrets.FLY_APP_NAME }}:latest --access-token "${{ secrets.FLY_DEPLOY_TOKEN }}" --strategy immediate
