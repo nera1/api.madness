@@ -1,0 +1,16 @@
+app = "madness"
+
+[build]
+  image = "registry.fly.io/madness"
+
+[deploy]
+  release_command = "java -XX:MaxRAMPercentage=75.0 -jar app.jar"
+
+[env]
+  JAVA_TOOL_OPTIONS = "-XX:MaxRAMPercentage=75.0"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true  # 사용하지 않을 때 자동 정지 (RAM 절약)
+  auto_start_machines = true
