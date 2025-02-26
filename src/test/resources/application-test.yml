@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://aws-0-ap-northeast-2.pooler.supabase.com:5432/postgres?user=postgres.lxjbwzycavcgjfahyngk&password=sm15883082
+
+  test:
+    database:
+      replace: NONE
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
