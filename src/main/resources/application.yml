@@ -3,6 +3,9 @@ spring:
     url: ${SB_URL}
     username: ${SB_USERNAME}
     password: ${SB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
   main:
     lazy-initialization: true
   application:

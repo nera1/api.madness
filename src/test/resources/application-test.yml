@@ -1,12 +1,12 @@
 spring:
   datasource:
-    url: jdbc:postgresql://aws-0-ap-northeast-2.pooler.supabase.com:5432/postgres?user=postgres.lxjbwzycavcgjfahyngk&password=sm15883082
-
-  test:
-    database:
-      replace: NONE
-
+    url: ${SB_URL}
+    username: ${SB_USERNAME}
+    password: ${SB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
   jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  main:
+    lazy-initialization: true
+  application:
+    name: madness
