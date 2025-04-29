@@ -26,7 +26,7 @@ public class CorsFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
         String origin = request.getHeader("Origin");
-        if (origin != null &&
+        if (origin == null ||
                 properties.getAllowedOrigins().stream().noneMatch(origin::equals)) {
             response.sendRedirect(properties.getRedirectUrl());
             return;
