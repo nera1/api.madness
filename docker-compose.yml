@@ -1,0 +1,22 @@
+version: "1.0"
+
+services:
+  db:
+    image: postgres:latest
+    restart: always
+
+    env_file:
+      - .env
+
+    environment:
+      POSTGRES_USER: ${DEV_DB_USERNAME}
+      POSTGRES_PASSWORD: ${DEV_DB_PASSWORD}
+      POSTGRES_DB: postgres
+
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
