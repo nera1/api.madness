@@ -15,19 +15,15 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         var registration = registry.addMapping("/**")
-                // 공통 설정
                 .allowedMethods(properties.getAllowedMethods().toArray(String[]::new))
                 .allowedHeaders(properties.getAllowedHeaders().toArray(String[]::new))
                 .allowCredentials(properties.isAllowCredentials())
                 .maxAge(properties.getMaxAge());
 
-        // dev: 와일드카드 패턴
         if (!properties.getAllowedOriginPatterns().isEmpty()) {
             registration.allowedOriginPatterns(
                     properties.getAllowedOriginPatterns().toArray(String[]::new));
-        }
-        // prod: 명시된 Origin 리스트
-        else {
+        } else {
             registration.allowedOrigins(
                     properties.getAllowedOrigins().toArray(String[]::new));
         }
