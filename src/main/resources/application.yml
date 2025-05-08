@@ -11,8 +11,6 @@ spring:
     name: madness
 
 cors:
-  allowed-origins:
-    - https://madn.es
   allowed-methods:
     - GET
     - POST
@@ -21,6 +19,5 @@ cors:
   allowed-headers:
     - Authorization
     - Content-Type
-  redirect-url: https://madn.es
   allow-credentials: true
   max-age: 1800
