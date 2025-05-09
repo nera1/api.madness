@@ -11,6 +11,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,13 +34,22 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @Email(message = "유효한 이메일 형식이어야 합니다")
+    @NotBlank(message = "이메일은 필수입니다")
+    @Size(min = 5, max = 254, message = "이메일은 5자 이상 254자 이하이어야 합니다")
+    @Column(nullable = false, unique = true, length = 254)
     private String email;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @NotBlank(message = "닉네임은 필수입니다")
+    @Size(min = 2, max = 12, message = "닉네임은 2자 이상 12자 이하입니다")
+    @Pattern(regexp = "^[A-Za-z가-힣0-9_-]+$", message = "닉네임은 영문, 한글, 숫자, '-', '_'만 사용할 수 있습니다")
+    @Column(nullable = false, unique = true, length = 12)
     private String nickname;
 
-    @Column(nullable = false)
+    @NotBlank(message = "비밀번호는 필수입니다")
+    @Size(min = 8, max = 32, message = "비밀번호는 8자 이상 32자 이하이어야 합니다")
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*]).+$", message = "비밀번호는 문자, 숫자, 특수문자를 모두 포함해야 합니다")
+    @Column(nullable = false, length = 60)
     private String password;
 
     @CreationTimestamp
