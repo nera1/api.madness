@@ -42,6 +42,6 @@ nbdist
 
 \*\*/.vscode
 
-# Fly.io 설정 파일 제외
+### H2 ###
 
-fly.toml
+**/h2db/
