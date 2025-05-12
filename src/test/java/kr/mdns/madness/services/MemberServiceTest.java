@@ -1,10 +1,13 @@
 package kr.mdns.madness.services;
 
 import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -13,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 
+import kr.mdns.madness.domain.Member;
 import kr.mdns.madness.repository.MemberRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,7 +36,18 @@ public class MemberServiceTest {
 
     @BeforeEach
     void setUp() {
-        when(memberRepository.exists(any(BooleanExpression.class))).thenReturn(false);
+        lenient().when(memberRepository.exists(any(BooleanExpression.class))).thenReturn(false);
+        lenient().when(passwordEncoder.encode(TEST_RAW_PWD)).thenReturn("ENC(pw)");
+        lenient().when(memberRepository.save(any(Member.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0, Member.class));
+    }
+
+    @Test
+    @DisplayName("이메일 중복 검사: 중복일 때 true 반환")
+    void testIsEmailDuplicate_true() {
+        when(memberRepository.exists(any(BooleanExpression.class))).thenReturn(true);
+        assertTrue(memberService.isEmailDuplicate(TEST_EMAIL));
+        verify(memberRepository).exists(any(BooleanExpression.class));
     }
 
 }
