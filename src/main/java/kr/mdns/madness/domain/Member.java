@@ -47,7 +47,6 @@ public class Member {
     private String nickname;
 
     @NotBlank(message = "비밀번호는 필수입니다")
-    @Size(min = 8, max = 32, message = "비밀번호는 8자 이상 32자 이하이어야 합니다")
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*]).+$", message = "비밀번호는 문자, 숫자, 특수문자를 모두 포함해야 합니다")
     @Column(nullable = false, length = 60)
     private String password;

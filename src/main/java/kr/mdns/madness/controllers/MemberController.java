@@ -1,17 +1,41 @@
 package kr.mdns.madness.controllers;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.validation.Valid;
+import kr.mdns.madness.domain.Member;
+import kr.mdns.madness.dto.SignupRequestDto;
+import kr.mdns.madness.dto.SignupResponseDto;
+import kr.mdns.madness.response.ApiResponse;
+import kr.mdns.madness.services.MemberService;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/api/member")
+@RequestMapping("/member")
 @Validated
+@RequiredArgsConstructor
 public class MemberController {
+    private final MemberService memberService;
+
     @PostMapping
-    public String postMethodName(@RequestBody String entity) {
-        return entity;
+    public ResponseEntity<ApiResponse<SignupResponseDto>> register(
+            @Valid @RequestBody SignupRequestDto req) {
+        Member saved = memberService.register(req);
+        SignupResponseDto payload = SignupResponseDto
+                .builder()
+                .email(saved.getEmail())
+                .nickname(saved.getNickname())
+                .build();
+        ApiResponse<SignupResponseDto> resp = new ApiResponse<SignupResponseDto>(0, "signup success", payload);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(resp);
     }
 }
