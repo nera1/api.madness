@@ -46,7 +46,7 @@ public class MemberController {
         public ResponseEntity<ApiResponse<DuplicateCheckResponseDto>> checkNickname(
                         @RequestParam String nickname) {
                 boolean isDuplicate = memberService.isNicknameDuplicate(nickname);
-                DuplicateCheckResponseDto payload = DuplicateCheckResponseDto.builder().isDuplicate(isDuplicate)
+                DuplicateCheckResponseDto payload = DuplicateCheckResponseDto.builder().duplicate(isDuplicate)
                                 .build();
                 ApiResponse<DuplicateCheckResponseDto> resp = new ApiResponse<>(0,
                                 isDuplicate ? "nickname duplicate" : "nickname available", payload);
@@ -56,7 +56,7 @@ public class MemberController {
         @GetMapping("/check/email")
         public ResponseEntity<ApiResponse<DuplicateCheckResponseDto>> checkEmail(@RequestParam String email) {
                 boolean isDuplicate = memberService.isEmailDuplicate(email);
-                DuplicateCheckResponseDto payload = DuplicateCheckResponseDto.builder().isDuplicate(isDuplicate)
+                DuplicateCheckResponseDto payload = DuplicateCheckResponseDto.builder().duplicate(isDuplicate)
                                 .build();
                 ApiResponse<DuplicateCheckResponseDto> resp = new ApiResponse<>(0,
                                 isDuplicate ? "email duplicate" : "email available", payload);

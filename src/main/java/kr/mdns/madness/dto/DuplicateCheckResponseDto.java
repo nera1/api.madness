@@ -1,5 +1,7 @@
 package kr.mdns.madness.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,5 +14,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class DuplicateCheckResponseDto {
-    private boolean isDuplicate;
+    @JsonProperty("isDuplicate")
+    private boolean duplicate;
 }

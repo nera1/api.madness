@@ -98,7 +98,8 @@ public class MemberControllerIntergrationTest {
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
         ApiResponse<DuplicateCheckResponseDto> body = res.getBody();
         assertThat(body).isNotNull();
+
         DuplicateCheckResponseDto data = body.getData();
-        assertThat(data).isNull();
+        assertThat(data.isDuplicate()).isEqualTo(true);
     }
 }
