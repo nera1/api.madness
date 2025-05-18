@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import kr.mdns.madness.domain.Member;
+import kr.mdns.madness.dto.DuplicateCheckResponseDto;
 import kr.mdns.madness.dto.SignupRequestDto;
 import kr.mdns.madness.dto.SignupResponseDto;
 import kr.mdns.madness.response.ApiResponse;
@@ -42,13 +43,24 @@ public class MemberController {
         }
 
         @GetMapping("/check/nickname")
-        public String checkNickname(@RequestParam String param) {
-                return new String();
+        public ResponseEntity<ApiResponse<DuplicateCheckResponseDto>> checkNickname(
+                        @RequestParam String nickname) {
+                boolean isDuplicate = memberService.isNicknameDuplicate(nickname);
+                DuplicateCheckResponseDto payload = DuplicateCheckResponseDto.builder().isDuplicate(isDuplicate)
+                                .build();
+                ApiResponse<DuplicateCheckResponseDto> resp = new ApiResponse<>(0,
+                                isDuplicate ? "nickname duplicate" : "nickname available", payload);
+                return ResponseEntity.status(HttpStatus.OK).body(resp);
         }
 
         @GetMapping("/check/email")
-        public String checkEmail(@RequestParam String param) {
-                return new String();
+        public ResponseEntity<ApiResponse<DuplicateCheckResponseDto>> checkEmail(@RequestParam String email) {
+                boolean isDuplicate = memberService.isEmailDuplicate(email);
+                DuplicateCheckResponseDto payload = DuplicateCheckResponseDto.builder().isDuplicate(isDuplicate)
+                                .build();
+                ApiResponse<DuplicateCheckResponseDto> resp = new ApiResponse<>(0,
+                                isDuplicate ? "email duplicate" : "email available", payload);
+                return ResponseEntity.status(HttpStatus.OK).body(resp);
         }
 
 }

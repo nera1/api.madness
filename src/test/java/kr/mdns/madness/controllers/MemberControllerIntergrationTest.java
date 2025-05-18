@@ -3,6 +3,11 @@ package kr.mdns.madness.controllers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
 import kr.mdns.madness.domain.QMember;
+import kr.mdns.madness.dto.DuplicateCheckResponseDto;
 import kr.mdns.madness.dto.SignupRequestDto;
 import kr.mdns.madness.dto.SignupResponseDto;
 import kr.mdns.madness.repository.MemberRepository;
@@ -37,11 +43,22 @@ public class MemberControllerIntergrationTest {
 
     }
 
+    @Autowired
+    private DataSource dataSource;
+
+    @BeforeEach
+    void logUrl() throws SQLException {
+        try (Connection conn = dataSource.getConnection()) {
+            System.out.println(">>> Test is connecting to: " +
+                    conn.getMetaData().getURL());
+        }
+    }
+
     @Test
     void post_memberSignupTest() {
         SignupRequestDto req = SignupRequestDto.builder()
-                .email("nera@madness.com")
-                .nickname("nera")
+                .email("nera@madn.es")
+                .nickname("asdf11")
                 .password("1q2w3e4r!!!")
                 .build();
 
@@ -67,5 +84,21 @@ public class MemberControllerIntergrationTest {
         QMember qm = QMember.member;
         BooleanExpression predicate = qm.email.eq(req.getEmail());
         assertTrue(memberRepository.exists(predicate));
+    }
+
+    @Test
+    void get_memberCheckEmailTest() {
+        HttpEntity<?> request = new HttpEntity<>(null);
+        ResponseEntity<ApiResponse<DuplicateCheckResponseDto>> res = rest.exchange(
+                "/member/check/email?email=nera@madness.com",
+                HttpMethod.GET,
+                request,
+                new ParameterizedTypeReference<>() {
+                });
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
+        ApiResponse<DuplicateCheckResponseDto> body = res.getBody();
+        assertThat(body).isNotNull();
+        DuplicateCheckResponseDto data = body.getData();
+        assertThat(data).isNull();
     }
 }

@@ -64,4 +64,5 @@ public class MemberServiceIntergrationTest {
     void testIsNicknameDuplicate_true() {
         assertTrue(memberService.isNicknameDuplicate("intTester"));
     }
+
 }
