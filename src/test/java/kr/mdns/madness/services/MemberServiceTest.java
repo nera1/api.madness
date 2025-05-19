@@ -48,22 +48,37 @@ public class MemberServiceTest {
     @Test
     @DisplayName("이메일 중복 검사: 중복일 때 true return")
     void testIsEmailDuplicate_true() {
-        // when(memberRepository.exists(any(BooleanExpression.class))).thenReturn(true);
-        // assertTrue(memberService.isEmailDuplicate(TEST_EMAIL));
-        // verify(memberRepository).exists(any(BooleanExpression.class));
+        when(memberRepository.exists(any(BooleanExpression.class))).thenReturn(false);
+        when(passwordEncoder.encode(TEST_RAW_PWD)).thenReturn("ENC(pw)");
+        when(memberRepository.save(any(Member.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0, Member.class));
+
+        when(memberRepository.exists(any(BooleanExpression.class))).thenReturn(true);
+        assertTrue(memberService.isEmailDuplicate(TEST_EMAIL));
+        verify(memberRepository).exists(any(BooleanExpression.class));
     }
 
     @Test
     @DisplayName("닉네임 중복 검사: 중복일 때 true return")
     void testIsNicknameDuplicate_true() {
-        // when(memberRepository.exists(any(BooleanExpression.class))).thenReturn(true);
-        // assertTrue(memberService.isNicknameDuplicate(TEST_NICK));
-        // verify(memberRepository).exists(any(BooleanExpression.class));
+        when(memberRepository.exists(any(BooleanExpression.class))).thenReturn(false);
+        when(passwordEncoder.encode(TEST_RAW_PWD)).thenReturn("ENC(pw)");
+        when(memberRepository.save(any(Member.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0, Member.class));
+
+        when(memberRepository.exists(any(BooleanExpression.class))).thenReturn(true);
+        assertTrue(memberService.isNicknameDuplicate(TEST_NICK));
+        verify(memberRepository).exists(any(BooleanExpression.class));
     }
 
     @Test
     @DisplayName("회원가입 테스트")
     void testRegister_success() {
+        when(memberRepository.exists(any(BooleanExpression.class))).thenReturn(false);
+        when(passwordEncoder.encode(TEST_RAW_PWD)).thenReturn("ENC(pw)");
+        when(memberRepository.save(any(Member.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0, Member.class));
+
         SignupRequestDto signupRequestDto = SignupRequestDto.builder()
                 .email(TEST_EMAIL)
                 .nickname(TEST_NICK)
