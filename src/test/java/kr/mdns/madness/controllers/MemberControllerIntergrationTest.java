@@ -43,17 +43,6 @@ public class MemberControllerIntergrationTest {
 
     }
 
-    @Autowired
-    private DataSource dataSource;
-
-    @BeforeEach
-    void logUrl() throws SQLException {
-        try (Connection conn = dataSource.getConnection()) {
-            System.out.println(">>> Test is connecting to: " +
-                    conn.getMetaData().getURL());
-        }
-    }
-
     @Test
     void post_memberSignupTest() {
         SignupRequestDto req = SignupRequestDto.builder()
@@ -91,6 +80,23 @@ public class MemberControllerIntergrationTest {
         HttpEntity<?> request = new HttpEntity<>(null);
         ResponseEntity<ApiResponse<DuplicateCheckResponseDto>> res = rest.exchange(
                 "/member/check/email?email=nera@madness.com",
+                HttpMethod.GET,
+                request,
+                new ParameterizedTypeReference<>() {
+                });
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
+        ApiResponse<DuplicateCheckResponseDto> body = res.getBody();
+        assertThat(body).isNotNull();
+
+        DuplicateCheckResponseDto data = body.getData();
+        assertThat(data.isDuplicate()).isEqualTo(true);
+    }
+
+    @Test
+    void get_memberCheckNickNameTest() {
+        HttpEntity<?> request = new HttpEntity<>(null);
+        ResponseEntity<ApiResponse<DuplicateCheckResponseDto>> res = rest.exchange(
+                "/member/check/nickname?nickname=nera",
                 HttpMethod.GET,
                 request,
                 new ParameterizedTypeReference<>() {
