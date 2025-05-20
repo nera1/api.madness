@@ -9,7 +9,11 @@ spring:
     password: ${SB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
+# cors:
+#   allowed-origins:
+#     - https://madn.es
+#   redirect-url: https://madn.es
+
 cors:
-  allowed-origins:
-    - https://madn.es
-  redirect-url: https://madn.es
+  allowed-origin-patterns:
+    - "*"
