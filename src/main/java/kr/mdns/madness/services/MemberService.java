@@ -27,7 +27,7 @@ public class MemberService {
 
     public boolean isNicknameDuplicate(String nickname) {
         QMember m = QMember.member;
-        BooleanExpression predicate = m.nickname.eq(nickname);
+        BooleanExpression predicate = m.nickname.equalsIgnoreCase(nickname);
         return memberRepository.exists(predicate);
     }
 
