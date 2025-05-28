@@ -10,6 +10,11 @@ spring:
     hibernate:
       ddl-auto: update
 
+jwt:
+  secret: sr4pAFdtvtGl2DG3CfKnikpSRaXPf0S7aKkLUsbkJic=
+  access-exp-ms: 900000
+  refresh-exp-sec: 1209600
+
   h2:
     console:
       enabled: true

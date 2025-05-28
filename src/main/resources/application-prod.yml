@@ -4,9 +4,9 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: ${SB_URL}?prepareThreshold=0&preferQueryMode=simple
-    username: ${SB_USERNAME}
-    password: ${SB_PASSWORD}
+    url: ${MD_URL}?prepareThreshold=0&preferQueryMode=simple
+    username: ${MD_USERNAME}
+    password: ${MD_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
@@ -15,6 +15,11 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1800000
       leak-detection-threshold: 30000
+
+jwt:
+  secret: ${MD_JWT_SECRET}
+  access-exp-ms: ${MD_JWT_EXP_MS}
+  refresh-exp-sec: ${MD_JWT_REFRESH_EXP_SEC}
 
 # cors:
 #   allowed-origins:
