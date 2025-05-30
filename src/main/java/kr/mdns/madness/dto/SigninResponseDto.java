@@ -10,9 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SigninResponseDto {
-    private String accessToken;
-    private String refreshToken;
     private String email;
     private String nickname;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

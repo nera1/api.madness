@@ -1,5 +1,6 @@
 package kr.mdns.madness.security;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -14,6 +15,14 @@ public class CustomUserDetails implements UserDetails {
 
     public CustomUserDetails(Member member) {
         this.member = member;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return member.getCreatedAt();
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return member.getUpdatedAt();
     }
 
     public Long getId() {

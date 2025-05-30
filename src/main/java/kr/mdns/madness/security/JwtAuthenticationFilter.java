@@ -1,16 +1,13 @@
 package kr.mdns.madness.security;
 
 import java.io.IOException;
-import java.util.Map;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,19 +16,13 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.mdns.madness.domain.Member;
-import kr.mdns.madness.dto.DuplicateCheckResponseDto;
 import kr.mdns.madness.dto.SigninRequestDto;
-import kr.mdns.madness.dto.SigninResponseDto;
-import kr.mdns.madness.response.ApiResponse;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authManager;
-    private final JwtUtil jwtUtil;
 
-    public JwtAuthenticationFilter(AuthenticationManager authManager, JwtUtil jwtUtil) {
+    public JwtAuthenticationFilter(AuthenticationManager authManager) {
         this.authManager = authManager;
-        this.jwtUtil = jwtUtil;
         setFilterProcessesUrl("/auth/login");
     }
 
@@ -58,45 +49,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             FilterChain chain,
             Authentication authResult)
             throws IOException, ServletException {
-        CustomUserDetails user = (CustomUserDetails) authResult.getPrincipal();
-        Long userId = Long.valueOf(user.getId());
-        Member member = user.getMember();
-
-        String accessToken = jwtUtil.generateAccessToken(userId);
-        String refreshToken = jwtUtil.generateRefreshToken(userId);
-
-        ResponseCookie atCookie = ResponseCookie.from("sess_id", accessToken)
-                .httpOnly(true)
-                .secure(true)
-                .domain(".madn.es")
-                .path("/")
-                .maxAge(jwtUtil.getAccessExpMs() / 1000)
-                .sameSite("None")
-                .build();
-
-        ResponseCookie rtCookie = ResponseCookie.from("sess_rf", refreshToken)
-                .httpOnly(true)
-                .secure(true)
-                .domain(".madn.es")
-                .path("/auth/refresh")
-                .maxAge(jwtUtil.getRefreshExpSec())
-                .sameSite("None")
-                .build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, atCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, rtCookie.toString());
-
-        response.setContentType("application/json");
-        SigninResponseDto payload = new SigninResponseDto(
-                accessToken,
-                refreshToken,
-                member.getEmail(),
-                member.getNickname(),
-                member.getCreatedAt());
-
-        ApiResponse<SigninResponseDto> resp = new ApiResponse<>(0, "sign in", payload);
-
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        new ObjectMapper().writeValue(response.getWriter(), resp);
+        SecurityContextHolder.getContext().setAuthentication(authResult);
+        chain.doFilter(request, response);
     }
 }

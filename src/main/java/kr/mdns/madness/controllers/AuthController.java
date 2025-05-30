@@ -2,20 +2,20 @@ package kr.mdns.madness.controllers;
 
 import java.util.Map;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletResponse;
 import kr.mdns.madness.domain.Member;
-import kr.mdns.madness.dto.SigninRequestDto;
 import kr.mdns.madness.dto.SigninResponseDto;
+import kr.mdns.madness.response.ApiResponse;
 import kr.mdns.madness.security.CustomUserDetails;
 import kr.mdns.madness.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -24,38 +24,39 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
-    private final AuthenticationManager authManager;
     private final JwtUtil jwtUtil;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> login(@RequestBody SigninRequestDto dto) {
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getEmail(),
-                dto.getPassword());
-        Authentication authentication = authManager.authenticate(authToken);
+    public ApiResponse<SigninResponseDto> signin(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            HttpServletResponse response) {
 
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Long userId = Long.valueOf(userDetails.getUsername());
-
+        Long userId = userDetails.getId();
         Member member = userDetails.getMember();
 
         String accessToken = jwtUtil.generateAccessToken(userId);
         String refreshToken = jwtUtil.generateRefreshToken(userId);
 
-        SigninResponseDto bodyDto = new SigninResponseDto(
-                accessToken,
-                refreshToken,
+        ResponseCookie atCookie = ResponseCookie.from("sess_id", accessToken)
+                .httpOnly(true).secure(true).domain(".madn.es")
+                .path("/").maxAge(jwtUtil.getAccessExpMs() / 1000).sameSite("None").build();
+        ResponseCookie rtCookie = ResponseCookie.from("sess_rf", refreshToken)
+                .httpOnly(true).secure(true).domain(".madn.es")
+                .path("/").maxAge(jwtUtil.getRefreshExpSec()).sameSite("None").build();
+        response.addHeader(HttpHeaders.SET_COOKIE, atCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, rtCookie.toString());
+
+        SigninResponseDto payload = new SigninResponseDto(
                 member.getEmail(),
                 member.getNickname(),
-                member.getCreatedAt());
-
-        return ResponseEntity.ok(Map.of(
-                "accessToken", accessToken,
-                "refreshToken", refreshToken));
+                member.getCreatedAt(),
+                member.getUpdatedAt());
+        return new ApiResponse<>(0, "sign in", payload);
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestBody Map<String, String> body) {
-        String refreshToken = body.get("refreshToken");
+        String refreshToken = body.get("sess_rf");
 
         if (refreshToken == null || !jwtUtil.validateToken(refreshToken)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
@@ -64,6 +65,6 @@ public class AuthController {
         Long userId = jwtUtil.getUserIdFromToken(refreshToken);
         String newAccessToken = jwtUtil.generateAccessToken(userId);
 
-        return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+        return ResponseEntity.ok(Map.of("sess_id", newAccessToken));
     }
 }
