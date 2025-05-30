@@ -58,7 +58,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationConfiguration authConfig) throws Exception {
         AuthenticationManager authManager = authConfig.getAuthenticationManager();
 
-        JwtAuthenticationFilter authFilter = new JwtAuthenticationFilter(authManager, jwtUtil);
+        JwtAuthenticationFilter authFilter = new JwtAuthenticationFilter(authManager);
         authFilter.setFilterProcessesUrl("/auth/signin");
 
         JwtAuthorizationFilter authzFilter = new JwtAuthorizationFilter(jwtUtil, userDetailsService);
