@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -18,7 +19,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import kr.mdns.madness.domain.Member;
+import kr.mdns.madness.dto.DuplicateCheckResponseDto;
 import kr.mdns.madness.dto.SigninRequestDto;
+import kr.mdns.madness.dto.SigninResponseDto;
+import kr.mdns.madness.response.ApiResponse;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authManager;
@@ -55,6 +60,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             throws IOException, ServletException {
         CustomUserDetails user = (CustomUserDetails) authResult.getPrincipal();
         Long userId = Long.valueOf(user.getId());
+        Member member = user.getMember();
 
         String accessToken = jwtUtil.generateAccessToken(userId);
         String refreshToken = jwtUtil.generateRefreshToken(userId);
@@ -81,7 +87,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.addHeader(HttpHeaders.SET_COOKIE, rtCookie.toString());
 
         response.setContentType("application/json");
-        response.getWriter().write(
-                new ObjectMapper().writeValueAsString(Map.of("accessToken", accessToken)));
+        SigninResponseDto payload = new SigninResponseDto(
+                accessToken,
+                refreshToken,
+                member.getEmail(),
+                member.getNickname(),
+                member.getCreatedAt());
+
+        ApiResponse<SigninResponseDto> resp = new ApiResponse<>(0, "sign in", payload);
+
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        new ObjectMapper().writeValue(response.getWriter(), resp);
     }
 }

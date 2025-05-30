@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import kr.mdns.madness.domain.Member;
 import kr.mdns.madness.dto.SigninRequestDto;
+import kr.mdns.madness.dto.SigninResponseDto;
+import kr.mdns.madness.security.CustomUserDetails;
 import kr.mdns.madness.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 
@@ -30,11 +33,20 @@ public class AuthController {
                 dto.getPassword());
         Authentication authentication = authManager.authenticate(authToken);
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        Long userId = Long.valueOf(userDetails.getUsername()); // `userId`로 JWT 발급
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = Long.valueOf(userDetails.getUsername());
+
+        Member member = userDetails.getMember();
 
         String accessToken = jwtUtil.generateAccessToken(userId);
         String refreshToken = jwtUtil.generateRefreshToken(userId);
+
+        SigninResponseDto bodyDto = new SigninResponseDto(
+                accessToken,
+                refreshToken,
+                member.getEmail(),
+                member.getNickname(),
+                member.getCreatedAt());
 
         return ResponseEntity.ok(Map.of(
                 "accessToken", accessToken,
