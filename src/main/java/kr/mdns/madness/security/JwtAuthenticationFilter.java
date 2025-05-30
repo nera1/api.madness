@@ -10,7 +10,6 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,7 +59,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String accessToken = jwtUtil.generateAccessToken(userId);
         String refreshToken = jwtUtil.generateRefreshToken(userId);
 
-        ResponseCookie atCookie = ResponseCookie.from("ACCESS_TOKEN", accessToken)
+        ResponseCookie atCookie = ResponseCookie.from("sess_id", accessToken)
                 .httpOnly(true)
                 .secure(true)
                 .domain(".madn.es")
@@ -69,7 +68,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .sameSite("None")
                 .build();
 
-        ResponseCookie rtCookie = ResponseCookie.from("REFRESH_TOKEN", refreshToken)
+        ResponseCookie rtCookie = ResponseCookie.from("sess_rf", refreshToken)
                 .httpOnly(true)
                 .secure(true)
                 .domain(".madn.es")

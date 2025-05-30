@@ -17,11 +17,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
-    private final UserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
-    public JwtAuthorizationFilter(JwtUtil jwtUtil, UserDetailsService uds) {
+    public JwtAuthorizationFilter(JwtUtil jwtUtil, CustomUserDetailsService cuds) {
         this.jwtUtil = jwtUtil;
-        this.userDetailsService = uds;
+        this.userDetailsService = cuds;
     }
 
     @Override
@@ -32,14 +32,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String token = null;
         if (request.getCookies() != null) {
             token = Arrays.stream(request.getCookies())
-                    .filter(c -> "ACCESS_TOKEN".equals(c.getName()))
+                    .filter(c -> "sess_id".equals(c.getName()))
                     .map(Cookie::getValue)
                     .findFirst().orElse(null);
         }
 
         if (token != null && jwtUtil.validateToken(token)) {
             Long userId = jwtUtil.getUserIdFromToken(token);
-            UserDetails user = userDetailsService.loadUserByUsername(userId.toString());
+            UserDetails user = userDetailsService.loadUserByUserId(userId);
             Authentication auth = new UsernamePasswordAuthenticationToken(
                     user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
