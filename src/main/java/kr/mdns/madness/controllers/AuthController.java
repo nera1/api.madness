@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,47 +25,49 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
-    private final JwtUtil jwtUtil;
+        private final JwtUtil jwtUtil;
 
-    @PostMapping("/signin")
-    public ApiResponse<SigninResponseDto> signin(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            HttpServletResponse response) {
+        @PostMapping("/signin")
+        public ResponseEntity<ApiResponse<SigninResponseDto>> signin(
+                        @AuthenticationPrincipal CustomUserDetails userDetails,
+                        HttpServletResponse response) {
 
-        Long userId = userDetails.getId();
-        Member member = userDetails.getMember();
+                Long userId = userDetails.getId();
+                Member member = userDetails.getMember();
+                String accessTok = jwtUtil.generateAccessToken(userId);
+                String refreshTok = jwtUtil.generateRefreshToken(userId);
 
-        String accessToken = jwtUtil.generateAccessToken(userId);
-        String refreshToken = jwtUtil.generateRefreshToken(userId);
+                ResponseCookie atCookie = ResponseCookie.from("sess_id", accessTok)
+                                .httpOnly(true).secure(true).domain(".madn.es")
+                                .path("/").maxAge(jwtUtil.getAccessExpMs() / 1000).sameSite("None").build();
+                ResponseCookie rtCookie = ResponseCookie.from("sess_rf", refreshTok)
+                                .httpOnly(true).secure(true).domain(".madn.es")
+                                .path("/").maxAge(jwtUtil.getRefreshExpSec()).sameSite("None").build();
 
-        ResponseCookie atCookie = ResponseCookie.from("sess_id", accessToken)
-                .httpOnly(true).secure(true).domain(".madn.es")
-                .path("/").maxAge(jwtUtil.getAccessExpMs() / 1000).sameSite("None").build();
-        ResponseCookie rtCookie = ResponseCookie.from("sess_rf", refreshToken)
-                .httpOnly(true).secure(true).domain(".madn.es")
-                .path("/").maxAge(jwtUtil.getRefreshExpSec()).sameSite("None").build();
-        response.addHeader(HttpHeaders.SET_COOKIE, atCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, rtCookie.toString());
+                SigninResponseDto payload = new SigninResponseDto(
+                                member.getEmail(),
+                                member.getNickname(),
+                                member.getCreatedAt(), member.getUpdatedAt());
+                ApiResponse<SigninResponseDto> body = new ApiResponse<>(0, "sign in", payload);
 
-        SigninResponseDto payload = new SigninResponseDto(
-                member.getEmail(),
-                member.getNickname(),
-                member.getCreatedAt(),
-                member.getUpdatedAt());
-        return new ApiResponse<>(0, "sign in", payload);
-    }
-
-    @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(@RequestBody Map<String, String> body) {
-        String refreshToken = body.get("sess_rf");
-
-        if (refreshToken == null || !jwtUtil.validateToken(refreshToken)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+                return ResponseEntity.ok()
+                                .header(HttpHeaders.SET_COOKIE, atCookie.toString())
+                                .header(HttpHeaders.SET_COOKIE, rtCookie.toString())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(body);
         }
 
-        Long userId = jwtUtil.getUserIdFromToken(refreshToken);
-        String newAccessToken = jwtUtil.generateAccessToken(userId);
+        @PostMapping("/refresh")
+        public ResponseEntity<?> refresh(@RequestBody Map<String, String> body) {
+                String refreshToken = body.get("sess_rf");
 
-        return ResponseEntity.ok(Map.of("sess_id", newAccessToken));
-    }
+                if (refreshToken == null || !jwtUtil.validateToken(refreshToken)) {
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+                }
+
+                Long userId = jwtUtil.getUserIdFromToken(refreshToken);
+                String newAccessToken = jwtUtil.generateAccessToken(userId);
+
+                return ResponseEntity.ok(Map.of("sess_id", newAccessToken));
+        }
 }
