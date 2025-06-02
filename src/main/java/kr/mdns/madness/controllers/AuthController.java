@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -64,7 +65,7 @@ public class AuthController {
 
         @GetMapping("/refresh")
         public ResponseEntity<ApiResponse<SigninResponseDto>> refresh(
-                        @RequestHeader(value = "sess_rf", required = false) String refreshToken,
+                        @CookieValue(name = "sess_rf", required = false) String refreshToken,
                         HttpServletResponse response) {
 
                 if (refreshToken == null || !jwtUtil.validateToken(refreshToken)) {
