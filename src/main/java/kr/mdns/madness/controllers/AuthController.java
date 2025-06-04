@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletResponse;
 import kr.mdns.madness.domain.Member;
+import kr.mdns.madness.dto.AuthMeResponseDto;
 import kr.mdns.madness.dto.SigninResponseDto;
 import kr.mdns.madness.repository.MemberRepository;
 import kr.mdns.madness.response.ApiResponse;
@@ -108,5 +109,24 @@ public class AuthController {
                                 .header(HttpHeaders.SET_COOKIE, rtCookie.toString())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(body);
+        }
+
+        @GetMapping("/me")
+        public ResponseEntity<ApiResponse<AuthMeResponseDto>> me(
+                        @AuthenticationPrincipal CustomUserDetails userDetails) {
+                if (userDetails == null) {
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                        .body(new ApiResponse<>(401, "unauthorized", null));
+                }
+
+                Member member = userDetails.getMember();
+                AuthMeResponseDto payload = new AuthMeResponseDto(
+                                member.getEmail(),
+                                member.getNickname(),
+                                member.getCreatedAt(),
+                                member.getUpdatedAt());
+
+                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                                .body(new ApiResponse<>(0, "ok", payload));
         }
 }
