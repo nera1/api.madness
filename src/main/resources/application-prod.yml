@@ -29,3 +29,9 @@ jwt:
 cors:
   allowed-origin-patterns:
     - "*"
+
+app:
+  cookie:
+    secure: true
+    sameSite: None
+    domain: .madn.es
