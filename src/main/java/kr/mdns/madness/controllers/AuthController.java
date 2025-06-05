@@ -151,7 +151,7 @@ public class AuthController {
                                 .body(new ApiResponse<>(0, "ok", payload));
         }
 
-        @PostMapping("/signout")
+        @GetMapping("/signout")
         public ResponseEntity<ApiResponse<Object>> signout() {
                 String domainOrNull = cookieDomain.isBlank() ? null : cookieDomain;
 
