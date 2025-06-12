@@ -181,4 +181,20 @@ public class AuthController {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(body);
         }
+
+        @GetMapping("/check")
+        public ResponseEntity<ApiResponse<Object>> checkAuth(
+                        @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+                if (userDetails == null) {
+                        return ResponseEntity
+                                        .status(HttpStatus.UNAUTHORIZED)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .body(new ApiResponse<>(401, "Unauthorized", null));
+                }
+
+                return ResponseEntity.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(new ApiResponse<>(0, "Authenticated", null));
+        }
 }
