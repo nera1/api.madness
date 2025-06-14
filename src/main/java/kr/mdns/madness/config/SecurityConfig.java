@@ -5,6 +5,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 import kr.mdns.madness.security.JwtAuthenticationFilter;
 import kr.mdns.madness.security.JwtAuthorizationFilter;
 import kr.mdns.madness.security.JwtUtil;
+import kr.mdns.madness.security.SecurityExceptionHandler;
+import lombok.RequiredArgsConstructor;
 import kr.mdns.madness.security.CustomUserDetailsService;
 
 import org.springframework.context.annotation.Bean;
@@ -12,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,15 +24,19 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
+    private final SecurityExceptionHandler securityExceptionHandler;
 
-    public SecurityConfig(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
-    }
+    // public SecurityConfig(JwtUtil jwtUtil, CustomUserDetailsService
+    // userDetailsService) {
+    // this.jwtUtil = jwtUtil;
+    // this.userDetailsService = userDetailsService;
+    // }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -49,6 +56,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(withDefaults())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(securityExceptionHandler)
+                        .accessDeniedHandler(securityExceptionHandler))
                 .headers(headers -> headers.frameOptions(FrameOptionsConfig::disable))
                 .authorizeHttpRequests(a -> a.anyRequest().permitAll())
                 .authenticationManager(authManager)

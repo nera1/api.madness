@@ -17,26 +17,26 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ChannelService {
-    private ChannelRepository channelRepository;
-    private MemberRepository memberRepository;
+        private final ChannelRepository channelRepository;
+        private final MemberRepository memberRepository;
 
-    @Transactional
-    public ChannelResponseDto createChannel(ChannelRequestDto req, Long userId) {
-        Member creator = memberRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("Member not found with id: " + userId));
+        @Transactional
+        public ChannelResponseDto createChannel(ChannelRequestDto req, Long userId) {
+                Member creator = memberRepository.findById(userId)
+                                .orElseThrow(() -> new NoSuchElementException("Member not found with id: " + userId));
 
-        Channel channel = Channel.builder()
-                .name(req.getName())
-                .creator(creator)
-                .build();
+                Channel channel = Channel.builder()
+                                .name(req.getName())
+                                .creator(creator)
+                                .build();
 
-        Channel saved = channelRepository.save(channel);
+                Channel saved = channelRepository.save(channel);
 
-        return ChannelResponseDto.builder()
-                .id(saved.getId())
-                .name(saved.getName())
-                .creatorId(saved.getCreator().getId())
-                .createdAt(saved.getCreatedAt())
-                .build();
-    }
+                return ChannelResponseDto.builder()
+                                .id(saved.getId())
+                                .name(saved.getName())
+                                .creatorId(saved.getCreator().getId())
+                                .createdAt(saved.getCreatedAt())
+                                .build();
+        }
 }

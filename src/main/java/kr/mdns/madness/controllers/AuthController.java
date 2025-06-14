@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -130,14 +131,10 @@ public class AuthController {
                                 .body(body);
         }
 
+        @PreAuthorize("isAuthenticated()")
         @GetMapping("/me")
         public ResponseEntity<ApiResponse<AuthMeResponseDto>> me(
                         @AuthenticationPrincipal CustomUserDetails userDetails) {
-
-                if (userDetails == null) {
-                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                                        .body(new ApiResponse<>(401, "unauthorized", null));
-                }
 
                 Member member = userDetails.getMember();
                 AuthMeResponseDto payload = new AuthMeResponseDto(
@@ -151,6 +148,7 @@ public class AuthController {
                                 .body(new ApiResponse<>(0, "ok", payload));
         }
 
+        @PreAuthorize("isAuthenticated()")
         @GetMapping("/signout")
         public ResponseEntity<ApiResponse<Object>> signout() {
                 String domainOrNull = cookieDomain.isBlank() ? null : cookieDomain;
@@ -182,16 +180,10 @@ public class AuthController {
                                 .body(body);
         }
 
+        @PreAuthorize("isAuthenticated()")
         @GetMapping("/check")
         public ResponseEntity<ApiResponse<Object>> checkAuth(
                         @AuthenticationPrincipal CustomUserDetails userDetails) {
-
-                if (userDetails == null) {
-                        return ResponseEntity
-                                        .status(HttpStatus.UNAUTHORIZED)
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .body(new ApiResponse<>(401, "Unauthorized", null));
-                }
 
                 return ResponseEntity.ok()
                                 .contentType(MediaType.APPLICATION_JSON)
