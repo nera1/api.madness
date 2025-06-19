@@ -20,6 +20,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 
 @Configuration
@@ -37,6 +38,12 @@ public class SecurityConfig {
     // this.jwtUtil = jwtUtil;
     // this.userDetailsService = userDetailsService;
     // }
+
+    @Bean
+    public WebSecurityCustomizer h2Ignore() {
+        return web -> web.ignoring()
+                .requestMatchers("/h2-console/**");
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -59,7 +66,9 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(securityExceptionHandler)
                         .accessDeniedHandler(securityExceptionHandler))
                 .headers(headers -> headers.frameOptions(FrameOptionsConfig::disable))
-                .authorizeHttpRequests(a -> a.anyRequest().permitAll())
+                .authorizeHttpRequests(a -> a
+                        .requestMatchers("/auth/signin").permitAll()
+                        .anyRequest().permitAll())
                 .authenticationManager(authManager)
                 .addFilter(authFilter)
                 .addFilterBefore(authzFilter, JwtAuthenticationFilter.class);

@@ -1,6 +1,7 @@
 package kr.mdns.madness.services;
 
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,15 +28,16 @@ public class ChannelService {
 
                 Channel channel = Channel.builder()
                                 .name(req.getName())
-                                .creator(creator)
+                                .creatorId(creator.getId())
+                                .publicId(UUID.randomUUID().toString())
                                 .build();
 
                 Channel saved = channelRepository.save(channel);
 
                 return ChannelResponseDto.builder()
-                                .id(saved.getId())
+                                .publicId(saved.getPublicId())
                                 .name(saved.getName())
-                                .creatorId(saved.getCreator().getId())
+                                .creatorNickname(creator.getNickname())
                                 .createdAt(saved.getCreatedAt())
                                 .build();
         }

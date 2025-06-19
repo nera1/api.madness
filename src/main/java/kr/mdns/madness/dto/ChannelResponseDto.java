@@ -8,8 +8,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ChannelResponseDto {
-    private Long id;
+    private String publicId;
     private String name;
-    private Long creatorId;
+    private String creatorNickname;
     private LocalDateTime createdAt;
 }

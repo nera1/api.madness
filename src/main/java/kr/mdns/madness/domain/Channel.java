@@ -20,17 +20,18 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class Channel {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true, updatable = false)
+    private String publicId;
+
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id", nullable = false)
-    private Member creator;
+    @Column(name = "creator_id", nullable = false)
+    private Long creatorId;
 
     @CreationTimestamp
     @Column(updatable = false)

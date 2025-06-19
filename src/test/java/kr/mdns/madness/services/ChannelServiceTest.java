@@ -24,53 +24,53 @@ import kr.mdns.madness.repository.MemberRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class ChannelServiceTest {
-    @Mock
-    private MemberRepository memberRepository;
+        @Mock
+        private MemberRepository memberRepository;
 
-    @Mock
-    private ChannelRepository channelRepository;
+        @Mock
+        private ChannelRepository channelRepository;
 
-    @InjectMocks
-    private ChannelService channelService;
+        @InjectMocks
+        private ChannelService channelService;
 
-    private final Long CREATOR_ID = 1L;
-    private final String CREATOR_EMAIL = "test@test.com";
-    private final Long CHANNEL_ID = 125L;
-    private final String CHANNEL_NAME = "테스트중입니다 모두오세요";
+        private final Long CREATOR_ID = 1L;
+        private final String CREATOR_EMAIL = "test@test.com";
+        private final String CREATOR_NICKNAME = "asdfasdf";
+        private final Long CHANNEL_ID = 125L;
+        private final String CHANNEL_NAME = "테스트중입니다 모두오세요";
 
-    @Test
-    @DisplayName("채널 생성 테스트")
-    void testChannelCreate_success() {
-        Member mockCreator = Member.builder()
-                .id(CREATOR_ID)
-                .email(CREATOR_EMAIL)
-                .build();
-        when(memberRepository.findById(CREATOR_ID)).thenReturn(Optional.of(mockCreator));
+        @Test
+        @DisplayName("채널 생성 테스트")
+        void testChannelCreate_success() {
+                Member mockCreator = Member.builder()
+                                .id(CREATOR_ID)
+                                .email(CREATOR_EMAIL)
+                                .build();
+                when(memberRepository.findById(CREATOR_ID)).thenReturn(Optional.of(mockCreator));
 
-        Channel unsaved = Channel.builder()
-                .name(CHANNEL_NAME)
-                .creator(mockCreator)
-                .build();
+                Channel unsaved = Channel.builder()
+                                .name(CHANNEL_NAME)
+                                .creatorId(CREATOR_ID)
+                                .build();
 
-        Channel saved = Channel.builder()
-                .id(CHANNEL_ID)
-                .name(CHANNEL_NAME)
-                .creator(mockCreator)
-                .createdAt(unsaved.getCreatedAt())
-                .build();
+                Channel saved = Channel.builder()
+                                .id(CHANNEL_ID)
+                                .name(CHANNEL_NAME)
+                                .creatorId(CREATOR_ID)
+                                .createdAt(unsaved.getCreatedAt())
+                                .build();
 
-        when(channelRepository.save(any(Channel.class))).thenReturn(saved);
+                when(channelRepository.save(any(Channel.class))).thenReturn(saved);
 
-        ChannelRequestDto req = ChannelRequestDto.builder().name(CHANNEL_NAME).build();
+                ChannelRequestDto req = ChannelRequestDto.builder().name(CHANNEL_NAME).build();
 
-        ChannelResponseDto resp = channelService.createChannel(req, CREATOR_ID);
+                ChannelResponseDto resp = channelService.createChannel(req, CREATOR_ID);
 
-        assertThat(resp.getId()).isEqualTo(CHANNEL_ID);
-        assertThat(resp.getName()).isEqualTo(CHANNEL_NAME);
-        assertThat(resp.getCreatorId()).isEqualTo(CREATOR_ID);
-        assertThat(resp.getCreatedAt()).isEqualTo(unsaved.getCreatedAt());
+                assertThat(resp.getName()).isEqualTo(CHANNEL_NAME);
+                assertThat(resp.getCreatorNickname()).isEqualTo(CREATOR_NICKNAME);
+                assertThat(resp.getCreatedAt()).isEqualTo(unsaved.getCreatedAt());
 
-        verify(memberRepository).findById(CREATOR_ID);
-        verify(channelRepository).save(any(Channel.class));
-    }
+                verify(memberRepository).findById(CREATOR_ID);
+                verify(channelRepository).save(any(Channel.class));
+        }
 }
