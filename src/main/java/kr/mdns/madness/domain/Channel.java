@@ -5,15 +5,10 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
-@Table(name = "channels")
+@Table(name = "channels", indexes = @Index(name = "idx_channel_public_id", columnList = "public_id"))
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,7 +19,7 @@ public class Channel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, updatable = false)
+    @Column(name = "public_id", nullable = false, unique = true, updatable = false, length = 36)
     private String publicId;
 
     @Column(nullable = false)

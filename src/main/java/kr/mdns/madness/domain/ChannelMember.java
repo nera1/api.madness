@@ -25,13 +25,11 @@ public class ChannelMember {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "channel_id", nullable = false)
-    private Channel channel;
+    @Column(name = "channel_id", nullable = false)
+    private Long creatorId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    @Column(name = "member_id", nullable = false)
+    private Long memberId;
 
     @CreationTimestamp
     @Column(name = "joined_at", updatable = false)
