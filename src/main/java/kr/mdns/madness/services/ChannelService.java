@@ -38,6 +38,13 @@ public class ChannelService {
 
                 Channel saved = channelRepository.save(channel);
 
+                ChannelMember cm = ChannelMember.builder()
+                                .channelId(saved.getId())
+                                .memberId(creator.getId())
+                                .build();
+
+                channelMemberRepository.save(cm);
+
                 return ChannelResponseDto.builder()
                                 .publicId(saved.getPublicId())
                                 .name(saved.getName())
@@ -46,28 +53,29 @@ public class ChannelService {
                                 .build();
         }
 
-        // @Transactional
-        // public void joinChannel(Long channelId, Long memberId) {
-        // // 1) 채널 존재 확인
-        // Channel channel = channelRepository.findById(channelId)
-        // .orElseThrow(() -> new NoSuchElementException("Channel not found: " +
-        // channelId));
-        // // 2) 멤버 존재 확인
-        // Member member = memberRepository.findById(memberId)
-        // .orElseThrow(() -> new NoSuchElementException("Member not found: " +
-        // memberId));
-        // // 3) 중복 가입 방지
-        // boolean exists = channelMemberRepository
-        // .existsByChannelIdAndMemberId(channelId, memberId);
-        // if (exists) {
-        // throw new IllegalStateException("이미 채널에 참여한 상태입니다");
-        // }
-        // // 4) 가입 처리
-        // ChannelMember cm = ChannelMember.builder()
-        // .channelId(channel.getId())
-        // .memberId(member.getId())
-        // .build();
-        // channelMemberRepository.save(cm);
-        // }
+        @Transactional
+        public void joinChannelByPublicId(String publicId, Long memberId) {
+                Channel channel = channelRepository.findByPublicId(publicId)
+                                .orElseThrow(() -> new NoSuchElementException("Channel not found: " + publicId));
+                join(channel.getId(), memberId);
+        }
+
+        @Transactional
+        public void join(Long channelId, Long memberId) {
+                if (channelMemberRepository.existsByChannelIdAndMemberId(channelId, memberId)) {
+                        throw new IllegalStateException("이미 참여한 채널입니다.");
+                }
+                Member member = memberRepository.findById(memberId)
+                                .orElseThrow(() -> new NoSuchElementException("Member not found: " + memberId));
+
+                Channel channel = channelRepository.findById(channelId)
+                                .orElseThrow(() -> new NoSuchElementException("Channel not found: " + channelId));
+
+                ChannelMember channelMember = ChannelMember.builder()
+                                .channelId(channel.getId())
+                                .memberId(member.getId())
+                                .build();
+                channelMemberRepository.save(channelMember);
+        }
 
 }

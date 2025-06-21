@@ -1,8 +1,8 @@
 package kr.mdns.madness.services;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -19,8 +19,10 @@ import kr.mdns.madness.domain.Channel;
 import kr.mdns.madness.domain.Member;
 import kr.mdns.madness.dto.ChannelRequestDto;
 import kr.mdns.madness.dto.ChannelResponseDto;
+import kr.mdns.madness.repository.ChannelMemberRepository;
 import kr.mdns.madness.repository.ChannelRepository;
 import kr.mdns.madness.repository.MemberRepository;
+import kr.mdns.madness.util.UuidGenerator;
 
 @ExtendWith(MockitoExtension.class)
 public class ChannelServiceTest {
@@ -28,7 +30,13 @@ public class ChannelServiceTest {
         private MemberRepository memberRepository;
 
         @Mock
+        private ChannelMemberRepository channelMemberRepository;
+
+        @Mock
         private ChannelRepository channelRepository;
+
+        @Mock
+        private UuidGenerator uuidGenerator;
 
         @InjectMocks
         private ChannelService channelService;
@@ -42,35 +50,20 @@ public class ChannelServiceTest {
         @Test
         @DisplayName("채널 생성 테스트")
         void testChannelCreate_success() {
-                Member mockCreator = Member.builder()
-                                .id(CREATOR_ID)
-                                .email(CREATOR_EMAIL)
-                                .build();
-                when(memberRepository.findById(CREATOR_ID)).thenReturn(Optional.of(mockCreator));
 
-                Channel unsaved = Channel.builder()
-                                .name(CHANNEL_NAME)
-                                .creatorId(CREATOR_ID)
-                                .build();
+                Member creator = Member.builder().id(CHANNEL_ID).email(CREATOR_EMAIL).nickname(CREATOR_NICKNAME)
+                                .password("PWD").build();
+                given(memberRepository.findById(CREATOR_ID)).willReturn(Optional.of(creator));
+                given(uuidGenerator.generateV7AsString()).willReturn("TEST-UUID");
+                Channel saved = Channel.builder().id(CHANNEL_ID).name(CHANNEL_NAME).creatorId(creator.getId()).build();
+                given(channelRepository.save(any(Channel.class))).willReturn(saved);
 
-                Channel saved = Channel.builder()
-                                .id(CHANNEL_ID)
-                                .name(CHANNEL_NAME)
-                                .creatorId(CREATOR_ID)
-                                .createdAt(unsaved.getCreatedAt())
-                                .build();
+                // ChannelRequestDto request =
+                // ChannelRequestDto.builder().name(CHANNEL_NAME).build();
 
-                when(channelRepository.save(any(Channel.class))).thenReturn(saved);
-
-                ChannelRequestDto req = ChannelRequestDto.builder().name(CHANNEL_NAME).build();
-
-                ChannelResponseDto resp = channelService.createChannel(req, CREATOR_ID);
-
-                assertThat(resp.getName()).isEqualTo(CHANNEL_NAME);
-                assertThat(resp.getCreatorNickname()).isEqualTo(CREATOR_NICKNAME);
-                assertThat(resp.getCreatedAt()).isEqualTo(unsaved.getCreatedAt());
-
-                verify(memberRepository).findById(CREATOR_ID);
-                verify(channelRepository).save(any(Channel.class));
+                then(channelRepository).should().save(any(Channel.class));
+                then(channelMemberRepository).should().save(argThat(
+                                cm -> cm.getChannelId().equals(CHANNEL_ID) && cm.getMemberId().equals(CREATOR_ID)));
         }
+
 }

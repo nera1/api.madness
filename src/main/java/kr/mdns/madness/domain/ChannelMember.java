@@ -26,7 +26,7 @@ public class ChannelMember {
     private Long id;
 
     @Column(name = "channel_id", nullable = false)
-    private Long creatorId;
+    private Long channelId;
 
     @Column(name = "member_id", nullable = false)
     private Long memberId;
