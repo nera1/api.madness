@@ -2,8 +2,10 @@ package kr.mdns.madness.services;
 
 import java.util.NoSuchElementException;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import kr.mdns.madness.domain.Channel;
 import kr.mdns.madness.domain.ChannelMember;
@@ -54,16 +56,17 @@ public class ChannelService {
         }
 
         @Transactional
-        public void joinChannelByPublicId(String publicId, Long memberId) {
+        public ChannelMember joinChannelByPublicId(String publicId, Long memberId) {
                 Channel channel = channelRepository.findByPublicId(publicId)
                                 .orElseThrow(() -> new NoSuchElementException("Channel not found: " + publicId));
-                join(channel.getId(), memberId);
+                return join(channel.getId(), memberId);
         }
 
         @Transactional
-        public void join(Long channelId, Long memberId) {
+        public ChannelMember join(Long channelId, Long memberId) {
                 if (channelMemberRepository.existsByChannelIdAndMemberId(channelId, memberId)) {
-                        throw new IllegalStateException("이미 참여한 채널입니다.");
+                        throw new ResponseStatusException(
+                                        HttpStatus.CONFLICT, "이미 참여한 채널입니다.");
                 }
                 Member member = memberRepository.findById(memberId)
                                 .orElseThrow(() -> new NoSuchElementException("Member not found: " + memberId));
@@ -76,6 +79,7 @@ public class ChannelService {
                                 .memberId(member.getId())
                                 .build();
                 channelMemberRepository.save(channelMember);
+                return channelMember;
         }
 
 }

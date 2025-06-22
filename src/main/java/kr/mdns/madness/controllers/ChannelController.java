@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-import kr.mdns.madness.domain.Channel;
+import kr.mdns.madness.domain.ChannelMember;
+import kr.mdns.madness.dto.ChannelJoinRequestDto;
+import kr.mdns.madness.dto.ChannelJoinResponseDto;
 import kr.mdns.madness.dto.ChannelRequestDto;
 import kr.mdns.madness.dto.ChannelResponseDto;
 import kr.mdns.madness.response.ApiResponse;
@@ -34,6 +36,20 @@ public class ChannelController {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ApiResponse<>(0, "Channel Created", saved));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/join")
+    public ResponseEntity<ApiResponse<ChannelJoinResponseDto>> joinChannel(
+            @Valid @RequestBody ChannelJoinRequestDto req,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        ChannelMember channelMember = channelService.joinChannelByPublicId(req.getPublicChannelId(),
+                userDetails.getId());
+        ChannelJoinResponseDto response = ChannelJoinResponseDto.builder().publicChannelId(req.getPublicChannelId())
+                .joinAt(channelMember.getJoinedAt()).build();
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ApiResponse<>(0, "Joined Channel", response));
     }
 
 }
