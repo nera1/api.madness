@@ -61,11 +61,14 @@ public class ChannelController {
 
         @GetMapping("/search")
         public ResponseEntity<ApiResponse<List<ChannelDto>>> listChannels(
+                        @RequestParam String keyword,
                         @RequestParam(required = false) String cursor,
                         @RequestParam(defaultValue = "10") int size,
                         @RequestParam(defaultValue = "desc") String order) {
-                boolean ascOrder = order.equalsIgnoreCase("asc");
-                List<ChannelDto> list = channelService.listChannels(cursor, size, ascOrder);
-                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(ApiResponse.of(0, "", list));
+                boolean asc = order.equalsIgnoreCase("asc");
+                List<ChannelDto> list = channelService.searchChannels(keyword, cursor, size, asc);
+                return ResponseEntity.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(ApiResponse.of(0, "", list));
         }
 }

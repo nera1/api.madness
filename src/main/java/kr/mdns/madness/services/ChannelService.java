@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,51 +87,22 @@ public class ChannelService {
                 return channelMember;
         }
 
-        @Transactional
-        public ChannelMember channelList(Long channelId, Long memberId) {
-                if (channelMemberRepository.existsByChannelIdAndMemberId(channelId, memberId)) {
-                        throw new ResponseStatusException(
-                                        HttpStatus.CONFLICT, "이미 참여한 채널입니다.");
-                }
-                Member member = memberRepository.findById(memberId)
-                                .orElseThrow(() -> new NoSuchElementException("Member not found: " + memberId));
-
-                Channel channel = channelRepository.findById(channelId)
-                                .orElseThrow(() -> new NoSuchElementException("Channel not found: " + channelId));
-
-                ChannelMember channelMember = ChannelMember.builder()
-                                .channelId(channel.getId())
-                                .memberId(member.getId())
-                                .build();
-                channelMemberRepository.save(channelMember);
-                return channelMember;
-        }
-
-        public List<ChannelDto> listChannels(
+        public List<ChannelDto> searchChannels(
+                        String keyword,
                         String cursor,
                         int size,
-                        boolean ascOrder) {
-                Pageable page = PageRequest.of(0, size);
-                List<Channel> channels;
+                        boolean asc) {
+                Sort sort = Sort.by("publicId");
+                sort = asc ? sort.ascending() : sort.descending();
+                Pageable page = PageRequest.of(0, size, sort);
 
-                if (ascOrder) {
-                        channels = (cursor != null)
-                                        ? channelRepository
-                                                        .findByPublicIdGreaterThanOrderByPublicIdAsc(cursor,
-                                                                        page)
-                                        : channelRepository.findAllByOrderByPublicIdAsc(page);
-                } else {
-                        channels = (cursor != null)
-                                        ? channelRepository
-                                                        .findByPublicIdLessThanOrderByPublicIdDesc(cursor, page)
-                                        : channelRepository.findAllByOrderByPublicIdDesc(page);
-                }
+                List<Channel> channels = channelRepository.search(keyword, cursor, asc, page);
 
                 return channels.stream()
-                                .map(channel -> new ChannelDto(
-                                                channel.getPublicId(),
-                                                channel.getName(),
-                                                channel.getCreatedAt()))
+                                .map(c -> new ChannelDto(
+                                                c.getPublicId(),
+                                                c.getName(),
+                                                c.getCreatedAt()))
                                 .toList();
         }
 
