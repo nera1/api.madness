@@ -1,7 +1,10 @@
 package kr.mdns.madness.services;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import kr.mdns.madness.domain.Channel;
 import kr.mdns.madness.domain.ChannelMember;
 import kr.mdns.madness.domain.Member;
+import kr.mdns.madness.dto.ChannelDto;
 import kr.mdns.madness.dto.ChannelRequestDto;
 import kr.mdns.madness.dto.ChannelResponseDto;
 import kr.mdns.madness.repository.ChannelMemberRepository;
@@ -80,6 +84,54 @@ public class ChannelService {
                                 .build();
                 channelMemberRepository.save(channelMember);
                 return channelMember;
+        }
+
+        @Transactional
+        public ChannelMember channelList(Long channelId, Long memberId) {
+                if (channelMemberRepository.existsByChannelIdAndMemberId(channelId, memberId)) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.CONFLICT, "이미 참여한 채널입니다.");
+                }
+                Member member = memberRepository.findById(memberId)
+                                .orElseThrow(() -> new NoSuchElementException("Member not found: " + memberId));
+
+                Channel channel = channelRepository.findById(channelId)
+                                .orElseThrow(() -> new NoSuchElementException("Channel not found: " + channelId));
+
+                ChannelMember channelMember = ChannelMember.builder()
+                                .channelId(channel.getId())
+                                .memberId(member.getId())
+                                .build();
+                channelMemberRepository.save(channelMember);
+                return channelMember;
+        }
+
+        public List<ChannelDto> listChannels(
+                        String cursor,
+                        int size,
+                        boolean ascOrder) {
+                Pageable page = PageRequest.of(0, size);
+                List<Channel> channels;
+
+                if (ascOrder) {
+                        channels = (cursor != null)
+                                        ? channelRepository
+                                                        .findByPublicIdGreaterThanOrderByPublicIdAsc(cursor,
+                                                                        page)
+                                        : channelRepository.findAllByOrderByPublicIdAsc(page);
+                } else {
+                        channels = (cursor != null)
+                                        ? channelRepository
+                                                        .findByPublicIdLessThanOrderByPublicIdDesc(cursor, page)
+                                        : channelRepository.findAllByOrderByPublicIdDesc(page);
+                }
+
+                return channels.stream()
+                                .map(channel -> new ChannelDto(
+                                                channel.getPublicId(),
+                                                channel.getName(),
+                                                channel.getCreatedAt()))
+                                .toList();
         }
 
 }
