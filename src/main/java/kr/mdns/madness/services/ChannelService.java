@@ -92,7 +92,7 @@ public class ChannelService {
                         String cursor,
                         int size,
                         boolean asc) {
-                Sort sort = Sort.by("publicId");
+                Sort sort = Sort.by("public_id");
                 sort = asc ? sort.ascending() : sort.descending();
                 Pageable page = PageRequest.of(0, size, sort);
 
