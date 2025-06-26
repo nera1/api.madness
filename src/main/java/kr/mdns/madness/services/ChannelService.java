@@ -2,6 +2,7 @@ package kr.mdns.madness.services;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -87,23 +88,14 @@ public class ChannelService {
                 return channelMember;
         }
 
-        public List<ChannelDto> searchChannels(
-                        String keyword,
-                        String cursor,
-                        int size,
-                        boolean asc) {
-                Sort sort = Sort.by("public_id");
-                sort = asc ? sort.ascending() : sort.descending();
-                Pageable page = PageRequest.of(0, size, sort);
+        public List<ChannelDto> searchChannels(String keyword, String cursor, int size, boolean asc) {
+                // 쿼리 실행
+                List<Channel> channels = channelRepository.search(keyword, cursor, asc, size);
 
-                List<Channel> channels = channelRepository.search(keyword, cursor, asc, page);
-
+                // Channel을 ChannelDto로 변환하여 반환
                 return channels.stream()
-                                .map(c -> new ChannelDto(
-                                                c.getPublicId(),
-                                                c.getName(),
-                                                c.getCreatedAt()))
-                                .toList();
+                                .map(c -> new ChannelDto(c.getPublicId(), c.getName(), c.getCreatedAt()))
+                                .collect(Collectors.toList());
         }
 
 }

@@ -16,22 +16,25 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
 
     @Query(value = """
             SELECT *
-              FROM channels
-             WHERE REPLACE(LOWER(name), ' ', '')
-                   LIKE CONCAT('%', REPLACE(LOWER(:keyword), ' ', ''), '%')
-               AND (
-                   :cursor IS NULL
-                   OR (
-                       (:asc = true  AND public_id > :cursor)
-                    OR (:asc = false AND public_id < :cursor)
-                   )
-               )
-            ORDER BY public_id
+            FROM channels
+            WHERE REPLACE(LOWER(name), ' ', '')
+                  LIKE CONCAT('%', REPLACE(LOWER(:keyword), ' ', ''), '%')
+              AND (
+                  :cursor IS NULL
+                  OR (
+                      :asc = true AND public_id > :cursor
+                      OR :asc = false AND public_id < :cursor
+                  )
+              )
+            ORDER BY
+                CASE WHEN :asc = true THEN public_id END ASC,
+                CASE WHEN :asc = false THEN public_id END DESC
+            LIMIT :size
             """, nativeQuery = true)
     List<Channel> search(
             @Param("keyword") String keyword,
             @Param("cursor") String cursor,
             @Param("asc") boolean asc,
-            Pageable pageable);
+            @Param("size") int size);
 
 }
