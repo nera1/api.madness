@@ -29,50 +29,57 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtUtil jwtUtil;
-    private final CustomUserDetailsService userDetailsService;
-    private final SecurityExceptionHandler securityExceptionHandler;
+        private final JwtUtil jwtUtil;
+        private final CustomUserDetailsService userDetailsService;
+        private final SecurityExceptionHandler securityExceptionHandler;
 
-    // public SecurityConfig(JwtUtil jwtUtil, CustomUserDetailsService
-    // userDetailsService) {
-    // this.jwtUtil = jwtUtil;
-    // this.userDetailsService = userDetailsService;
-    // }
+        // public SecurityConfig(JwtUtil jwtUtil, CustomUserDetailsService
+        // userDetailsService) {
+        // this.jwtUtil = jwtUtil;
+        // this.userDetailsService = userDetailsService;
+        // }
 
-    @Bean
-    public WebSecurityCustomizer h2Ignore() {
-        return web -> web.ignoring()
-                .requestMatchers("/h2-console/**");
-    }
+        @Bean
+        public WebSecurityCustomizer h2Ignore() {
+                return web -> web.ignoring()
+                                .requestMatchers("/h2-console/**");
+        }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationConfiguration authConfig) throws Exception {
-        AuthenticationManager authManager = authConfig.getAuthenticationManager();
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationConfiguration authConfig)
+                        throws Exception {
+                AuthenticationManager authManager = authConfig.getAuthenticationManager();
 
-        JwtAuthenticationFilter authFilter = new JwtAuthenticationFilter(authManager);
-        authFilter.setFilterProcessesUrl("/auth/signin");
+                JwtAuthenticationFilter authFilter = new JwtAuthenticationFilter(authManager);
+                authFilter.setFilterProcessesUrl("/auth/signin");
 
-        JwtAuthorizationFilter authzFilter = new JwtAuthorizationFilter(jwtUtil, userDetailsService);
+                JwtAuthorizationFilter authzFilter = new JwtAuthorizationFilter(jwtUtil, userDetailsService,
+                                securityExceptionHandler);
 
-        http
-                .csrf(csrf -> csrf.disable())
-                .cors(withDefaults())
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(securityExceptionHandler)
-                        .accessDeniedHandler(securityExceptionHandler))
-                .headers(headers -> headers.frameOptions(FrameOptionsConfig::disable))
-                .authorizeHttpRequests(a -> a
-                        .requestMatchers("/auth/signin").permitAll()
-                        .anyRequest().permitAll())
-                .authenticationManager(authManager)
-                .addFilter(authFilter)
-                .addFilterBefore(authzFilter, JwtAuthenticationFilter.class);
+                http
+                                .csrf(csrf -> csrf.disable())
+                                .cors(withDefaults())
+                                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .exceptionHandling(ex -> ex.authenticationEntryPoint(securityExceptionHandler)
+                                                .accessDeniedHandler(securityExceptionHandler))
+                                .headers(headers -> headers.frameOptions(FrameOptionsConfig::disable))
+                                .authorizeHttpRequests(a -> a
+                                                .requestMatchers("/auth/signin",
+                                                                "/auth/refresh",
+                                                                "/member",
+                                                                "/channel/search",
+                                                                "/member/check/**")
+                                                .permitAll()
+                                                .anyRequest().authenticated())
+                                .authenticationManager(authManager)
+                                .addFilter(authFilter)
+                                .addFilterBefore(authzFilter, JwtAuthenticationFilter.class);
 
-        return http.build();
-    }
+                return http.build();
+        }
 }

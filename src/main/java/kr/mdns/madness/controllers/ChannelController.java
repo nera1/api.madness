@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ChannelController {
         private final ChannelService channelService;
 
-        @PreAuthorize("isAuthenticated()")
         @PostMapping
         public ResponseEntity<ApiResponse<ChannelResponseDto>> createChannel(@Valid @RequestBody ChannelRequestDto req,
                         @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -44,7 +43,6 @@ public class ChannelController {
                                 .body(new ApiResponse<>(0, "Channel Created", saved));
         }
 
-        @PreAuthorize("isAuthenticated()")
         @PostMapping("/join")
         public ResponseEntity<ApiResponse<ChannelJoinResponseDto>> joinChannel(
                         @Valid @RequestBody ChannelJoinRequestDto req,

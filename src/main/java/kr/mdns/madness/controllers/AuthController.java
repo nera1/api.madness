@@ -131,7 +131,6 @@ public class AuthController {
                                 .body(body);
         }
 
-        @PreAuthorize("isAuthenticated()")
         @GetMapping("/me")
         public ResponseEntity<ApiResponse<AuthMeResponseDto>> me(
                         @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -148,7 +147,6 @@ public class AuthController {
                                 .body(new ApiResponse<>(0, "ok", payload));
         }
 
-        @PreAuthorize("isAuthenticated()")
         @GetMapping("/signout")
         public ResponseEntity<ApiResponse<Object>> signout() {
                 String domainOrNull = cookieDomain.isBlank() ? null : cookieDomain;
@@ -180,7 +178,6 @@ public class AuthController {
                                 .body(body);
         }
 
-        @PreAuthorize("isAuthenticated()")
         @GetMapping("/check")
         public ResponseEntity<ApiResponse<Object>> checkAuth(
                         @AuthenticationPrincipal CustomUserDetails userDetails) {
