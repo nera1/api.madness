@@ -89,13 +89,31 @@ public class ChannelService {
         }
 
         public List<ChannelDto> searchChannels(String keyword, String cursor, int size, boolean asc) {
-                // 쿼리 실행
                 List<Channel> channels = channelRepository.search(keyword, cursor, asc, size);
 
-                // Channel을 ChannelDto로 변환하여 반환
                 return channels.stream()
                                 .map(c -> new ChannelDto(c.getPublicId(), c.getName(), c.getCreatedAt()))
                                 .collect(Collectors.toList());
         }
 
+        public void checkMembership(String publicId, Long memberId) {
+                Channel channel = channelRepository.findByPublicId(publicId)
+                                .orElseThrow(() -> new NoSuchElementException("Channel not found: " + publicId));
+
+                boolean joined = channelMemberRepository
+                                .existsByChannelIdAndMemberId(channel.getId(), memberId);
+
+                if (!joined) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.FORBIDDEN,
+                                        "채널에 가입되어 있지 않습니다.");
+                }
+        }
+
+        public boolean isMemberJoined(String publicId, Long memberId) {
+                Channel channel = channelRepository.findByPublicId(publicId)
+                                .orElseThrow(() -> new NoSuchElementException("Channel not found: " + publicId));
+                return channelMemberRepository
+                                .existsByChannelIdAndMemberId(channel.getId(), memberId);
+        }
 }
