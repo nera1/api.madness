@@ -34,6 +34,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ChannelController {
         private final ChannelService channelService;
 
+        @GetMapping("/{publicId}")
+        public ResponseEntity<ApiResponse<ChannelResponseDto>> getChannelInfo(
+                        @PathVariable String publicId,
+                        @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+                ChannelResponseDto response = channelService.getChannel(publicId, userDetails.getId());
+
+                return ResponseEntity.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(new ApiResponse<>(0, "Channel Info", response));
+        }
+
         @PostMapping
         public ResponseEntity<ApiResponse<ChannelResponseDto>> createChannel(@Valid @RequestBody ChannelRequestDto req,
                         @AuthenticationPrincipal CustomUserDetails userDetails) {

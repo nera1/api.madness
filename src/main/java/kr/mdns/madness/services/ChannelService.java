@@ -116,4 +116,22 @@ public class ChannelService {
                 return channelMemberRepository
                                 .existsByChannelIdAndMemberId(channel.getId(), memberId);
         }
+
+        public ChannelResponseDto getChannel(String publicId, Long memberId) {
+                checkMembership(publicId, memberId);
+
+                Channel channel = channelRepository.findByPublicId(publicId)
+                                .orElseThrow(() -> new NoSuchElementException("Channel not found: " + publicId));
+
+                Member creator = memberRepository.findById(channel.getCreatorId())
+                                .orElseThrow(() -> new NoSuchElementException(
+                                                "Member not found: " + channel.getCreatorId()));
+
+                return ChannelResponseDto.builder()
+                                .publicId(channel.getPublicId())
+                                .name(channel.getName())
+                                .creatorNickname(creator.getNickname())
+                                .createdAt(channel.getCreatedAt())
+                                .build();
+        }
 }
