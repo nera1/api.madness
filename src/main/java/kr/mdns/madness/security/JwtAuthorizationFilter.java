@@ -23,12 +23,12 @@ import io.jsonwebtoken.JwtException;
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
-    private final AuthenticationEntryPoint entryPoint; // ← 추가
+    private final AuthenticationEntryPoint entryPoint;
 
     public JwtAuthorizationFilter(
             JwtUtil jwtUtil,
             CustomUserDetailsService cuds,
-            AuthenticationEntryPoint entryPoint) { // ← 추가
+            AuthenticationEntryPoint entryPoint) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = cuds;
         this.entryPoint = entryPoint;
