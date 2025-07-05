@@ -17,7 +17,6 @@ public class ChatController {
     public void sendMessage(
             @DestinationVariable String channelId,
             ChatMessageDto chatMessage) {
-        System.out.println("▶ sendMessage 호출! channelId=" + channelId + ", payload=" + chatMessage);
         chatService.broadcast(channelId, chatMessage);
     }
 }
