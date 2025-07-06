@@ -7,14 +7,22 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import kr.mdns.madness.interceptor.JwtHandShakeInterceptor;
+import lombok.RequiredArgsConstructor;
+
 @Profile("h2")
 @Configuration
+@RequiredArgsConstructor
 @EnableWebSocketMessageBroker
 public class WebSocketConfigDev implements WebSocketMessageBrokerConfigurer {
+
+    private final JwtHandShakeInterceptor jwtHandShakeInterceptor;
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry
                 .addEndpoint("/ws/chat")
+                .addInterceptors(jwtHandShakeInterceptor)
                 .setAllowedOriginPatterns("http://localhost:3000")
                 .withSockJS();
     }
