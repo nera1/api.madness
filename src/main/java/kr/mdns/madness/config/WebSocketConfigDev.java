@@ -20,15 +20,11 @@ public class WebSocketConfigDev implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // registry
-        // .addEndpoint("/ws/chat")
-        // .addInterceptors(jwtHandShakeInterceptor)
-        // .setAllowedOriginPatterns("http://localhost:3000")
-        // .withSockJS();
         registry
                 .addEndpoint("/ws/chat")
                 .addInterceptors(jwtHandShakeInterceptor)
-                .setAllowedOriginPatterns("*", "http://localhost:3000");
+                .setAllowedOriginPatterns("*", "http://localhost:3000")
+                .withSockJS();
     }
 
     @Override

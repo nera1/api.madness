@@ -25,7 +25,7 @@ public class ChannelMember {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "public_id", nullable = false)
+    @Column(nullable = false)
     private String publicChannelId;
 
     @Column(name = "member_id", nullable = false)
