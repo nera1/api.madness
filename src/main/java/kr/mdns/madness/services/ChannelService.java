@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +44,7 @@ public class ChannelService {
                 Channel saved = channelRepository.save(channel);
 
                 ChannelMember cm = ChannelMember.builder()
-                                .channelId(saved.getId())
+                                .publicChannelId(saved.getPublicId()) // ← 추가
                                 .memberId(creator.getId())
                                 .build();
 
@@ -65,23 +62,23 @@ public class ChannelService {
         public ChannelMember joinChannelByPublicId(String publicId, Long memberId) {
                 Channel channel = channelRepository.findByPublicId(publicId)
                                 .orElseThrow(() -> new NoSuchElementException("Channel not found: " + publicId));
-                return join(channel.getId(), memberId);
+                return join(channel.getPublicId(), memberId);
         }
 
         @Transactional
-        public ChannelMember join(Long channelId, Long memberId) {
-                if (channelMemberRepository.existsByChannelIdAndMemberId(channelId, memberId)) {
+        public ChannelMember join(String publicChannelId, Long memberId) {
+                if (channelMemberRepository.existsByPublicChannelIdAndMemberId(publicChannelId, memberId)) {
                         throw new ResponseStatusException(
                                         HttpStatus.CONFLICT, "이미 참여한 채널입니다.");
                 }
                 Member member = memberRepository.findById(memberId)
                                 .orElseThrow(() -> new NoSuchElementException("Member not found: " + memberId));
 
-                Channel channel = channelRepository.findById(channelId)
-                                .orElseThrow(() -> new NoSuchElementException("Channel not found: " + channelId));
+                Channel channel = channelRepository.findByPublicId(publicChannelId)
+                                .orElseThrow(() -> new NoSuchElementException("Channel not found: " + publicChannelId));
 
                 ChannelMember channelMember = ChannelMember.builder()
-                                .channelId(channel.getId())
+                                .publicChannelId(channel.getPublicId())
                                 .memberId(member.getId())
                                 .build();
                 channelMemberRepository.save(channelMember);
@@ -101,7 +98,7 @@ public class ChannelService {
                                 .orElseThrow(() -> new NoSuchElementException("Channel not found: " + publicId));
 
                 boolean joined = channelMemberRepository
-                                .existsByChannelIdAndMemberId(channel.getId(), memberId);
+                                .existsByPublicChannelIdAndMemberId(channel.getPublicId(), memberId);
 
                 if (!joined) {
                         throw new ResponseStatusException(
@@ -114,7 +111,7 @@ public class ChannelService {
                 Channel channel = channelRepository.findByPublicId(publicId)
                                 .orElseThrow(() -> new NoSuchElementException("Channel not found: " + publicId));
                 return channelMemberRepository
-                                .existsByChannelIdAndMemberId(channel.getId(), memberId);
+                                .existsByPublicChannelIdAndMemberId(channel.getPublicId(), memberId);
         }
 
         public ChannelResponseDto getChannel(String publicId, Long memberId) {
@@ -134,4 +131,5 @@ public class ChannelService {
                                 .createdAt(channel.getCreatedAt())
                                 .build();
         }
+
 }

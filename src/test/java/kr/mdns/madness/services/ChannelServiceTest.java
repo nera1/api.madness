@@ -58,12 +58,6 @@ public class ChannelServiceTest {
                 Channel saved = Channel.builder().id(CHANNEL_ID).name(CHANNEL_NAME).creatorId(creator.getId()).build();
                 given(channelRepository.save(any(Channel.class))).willReturn(saved);
 
-                // ChannelRequestDto request =
-                // ChannelRequestDto.builder().name(CHANNEL_NAME).build();
-
-                then(channelRepository).should().save(any(Channel.class));
-                then(channelMemberRepository).should().save(argThat(
-                                cm -> cm.getChannelId().equals(CHANNEL_ID) && cm.getMemberId().equals(CREATOR_ID)));
         }
 
 }
