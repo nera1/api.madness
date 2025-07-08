@@ -30,6 +30,6 @@ public class ChannelMemberService {
 
     @CacheEvict(cacheNames = "joinedChannels", key = "#userId")
     public void evictJoinedChannelIds(Long userId) {
-        // 채널 탈퇴 등으로 DB가 바뀌었을 때 이 메서드를 호출하여 캐시를 갱신
+
     }
 }

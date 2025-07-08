@@ -28,6 +28,7 @@ public class ChannelService {
         private final ChannelRepository channelRepository;
         private final MemberRepository memberRepository;
         private final ChannelMemberRepository channelMemberRepository;
+        private final ChannelMemberService channelMemberService;
         private final UuidGenerator uuidGenerator;
 
         @Transactional
@@ -82,6 +83,9 @@ public class ChannelService {
                                 .memberId(member.getId())
                                 .build();
                 channelMemberRepository.save(channelMember);
+
+                channelMemberService.evictJoinedChannelIds(memberId);
+
                 return channelMember;
         }
 
