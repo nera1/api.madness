@@ -24,14 +24,35 @@ public class StompAuthInterceptor implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-        Principal p = accessor.getUser();
-        if (p instanceof Authentication) {
-            Authentication auth = (Authentication) p;
-            Object principal = auth.getPrincipal();
-            if (principal instanceof CustomUserDetails) {
-                CustomUserDetails userDetails = (CustomUserDetails) principal;
+
+        // System.out.println(accessor.getCommand());
+
+        if (accessor.getCommand() == StompCommand.SUBSCRIBE
+                || accessor.getCommand() == StompCommand.SEND) {
+
+            Principal principal = accessor.getUser();
+            if (!(principal instanceof Authentication)) {
+                return message;
+            }
+
+            Authentication auth = (Authentication) principal;
+            Object userObj = auth.getPrincipal();
+            if (!(userObj instanceof CustomUserDetails)) {
+                return message;
+            }
+
+            Long userId = ((CustomUserDetails) userObj).getId();
+
+            String dest = accessor.getDestination();
+            String publicChannelId = dest.substring(dest.lastIndexOf('.') + 1);
+
+            Set<String> joined = channelMemberService.findJoinedChannelIds(userId);
+
+            if (!joined.contains(publicChannelId)) {
+                throw new IllegalArgumentException("해당 채널에 대한 접근 권한이 없습니다.");
             }
         }
+
         return ChannelInterceptor.super.preSend(message, channel);
     }
 }
