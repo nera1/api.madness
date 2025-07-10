@@ -25,7 +25,7 @@ public class StompAuthInterceptor implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
-        // System.out.println(accessor.getCommand());
+        System.out.println(accessor.getCommand());
 
         if (accessor.getCommand() == StompCommand.SUBSCRIBE
                 || accessor.getCommand() == StompCommand.SEND) {
