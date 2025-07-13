@@ -1,9 +1,5 @@
 package kr.mdns.madness.interceptor;
 
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -28,32 +24,31 @@ public class ChannelConnectionCountInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         StompCommand cmd = accessor.getCommand();
 
-        Long userId = ((CustomUserDetails) ((Authentication) accessor.getUser()).getPrincipal()).getId();
-
-        String dest = accessor.getDestination();
-
-        if (dest == null || !dest.contains(".")) {
+        String subscriptionIdFull = accessor.getSubscriptionId();
+        if (subscriptionIdFull == null) {
             return;
         }
 
-        String publicId = webSocketService.extractPublicChannelIdFromDestination(dest);
+        String publicId = webSocketService
+                .extractPublicChannelIdFromSubscriptionId(subscriptionIdFull);
+        String randomId = webSocketService
+                .extractRandomIdFromSubscriptionId(subscriptionIdFull);
 
-        if (StompCommand.DISCONNECT.equals(cmd)) {
-            int count = channelConnectionCountService.removeUser(publicId, userId);
-            System.out.println(publicId + " 현재 접속 유저 수: " + count);
-            return;
-        }
+        Long userId = ((CustomUserDetails) ((Authentication) accessor.getUser())
+                .getPrincipal()).getId();
 
         if (StompCommand.SUBSCRIBE.equals(cmd)) {
-            int count = channelConnectionCountService.addUser(publicId, userId);
-            System.out.println(publicId + " 현재 접속 유저 수: " + count);
+            channelConnectionCountService.addSubscription(
+                    publicId, userId, randomId);
+            channelConnectionCountService.getUserCount(publicId);
+            return;
+        }
+        if (StompCommand.UNSUBSCRIBE.equals(cmd)) {
+            channelConnectionCountService.removeSubscription(
+                    publicId, userId, randomId);
+            channelConnectionCountService.getUserCount(publicId);
             return;
         }
 
-        if (StompCommand.UNSUBSCRIBE.equals(cmd) || StompCommand.DISCONNECT.equals(cmd)) {
-            int count = channelConnectionCountService.removeUser(publicId, userId);
-            System.out.println(publicId + " 현재 접속 유저 수: " + count);
-            return;
-        }
     }
 }

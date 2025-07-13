@@ -28,4 +28,26 @@ public class WebSocketService {
         }
         return destination.substring(idx + 1);
     }
+
+    public String extractPublicChannelIdFromSubscriptionId(String subscriptionId) {
+        String prefix = "sub-";
+        if (!subscriptionId.startsWith(prefix)) {
+            throw new IllegalArgumentException("잘못된 subscriptionId: " + subscriptionId);
+        }
+
+        int lastDash = subscriptionId.lastIndexOf('-');
+        if (lastDash <= prefix.length()) {
+            throw new IllegalArgumentException("잘못된 subscriptionId: " + subscriptionId);
+        }
+
+        return subscriptionId.substring(prefix.length(), lastDash);
+    }
+
+    public String extractRandomIdFromSubscriptionId(String subscriptionId) {
+        int idx = subscriptionId.lastIndexOf('-');
+        if (idx < 0 || idx == subscriptionId.length() - 1) {
+            throw new IllegalArgumentException("잘못된 subscriptionId: " + subscriptionId);
+        }
+        return subscriptionId.substring(idx + 1);
+    }
 }
