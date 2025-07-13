@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,19 +21,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 
+@RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
     private final AuthenticationEntryPoint entryPoint;
-
-    public JwtAuthorizationFilter(
-            JwtUtil jwtUtil,
-            CustomUserDetailsService cuds,
-            AuthenticationEntryPoint entryPoint) {
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = cuds;
-        this.entryPoint = entryPoint;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

@@ -29,6 +29,7 @@ public class ChannelService {
         private final MemberRepository memberRepository;
         private final ChannelMemberRepository channelMemberRepository;
         private final ChannelMemberService channelMemberService;
+        private final ChannelConnectionCountService channelConnectionCountService;
         private final UuidGenerator uuidGenerator;
 
         @Transactional
@@ -93,7 +94,8 @@ public class ChannelService {
                 List<Channel> channels = channelRepository.search(keyword, cursor, asc, size);
 
                 return channels.stream()
-                                .map(c -> new ChannelDto(c.getPublicId(), c.getName(), c.getCreatedAt()))
+                                .map(c -> new ChannelDto(c.getPublicId(), c.getName(), c.getCreatedAt(),
+                                                channelConnectionCountService.getUserCount(c.getPublicId())))
                                 .collect(Collectors.toList());
         }
 

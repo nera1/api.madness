@@ -11,4 +11,5 @@ public class ChannelDto {
     private String publicId;
     private String name;
     private LocalDateTime createdAt;
+    private int participants;
 }
