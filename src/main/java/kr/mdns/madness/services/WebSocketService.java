@@ -10,6 +10,18 @@ import kr.mdns.madness.security.CustomUserDetails;
 
 @Component
 public class WebSocketService {
+
+    public Optional<CustomUserDetails> resolvedUserDetails(Principal principal) {
+        if (!(principal instanceof Authentication)) {
+            return Optional.empty();
+        }
+        Object principalObj = ((Authentication) principal).getPrincipal();
+        if (principalObj instanceof CustomUserDetails) {
+            return Optional.of((CustomUserDetails) principalObj);
+        }
+        return Optional.empty();
+    }
+
     public Optional<Long> resolvedUserId(Principal principal) {
         if (!(principal instanceof Authentication)) {
             return Optional.empty();
