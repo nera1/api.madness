@@ -69,8 +69,6 @@ public class SecurityConfig {
                                                 .accessDeniedHandler(securityExceptionHandler))
                                 .headers(headers -> headers.frameOptions(FrameOptionsConfig::disable))
                                 .authorizeHttpRequests(a -> a
-                                                .requestMatchers("/ws/**").permitAll()
-                                                .requestMatchers("/pub/**", "/sub/**").permitAll()
                                                 .requestMatchers("/auth/signin",
                                                                 "/auth/refresh",
                                                                 "/member",

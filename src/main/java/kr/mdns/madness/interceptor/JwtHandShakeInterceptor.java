@@ -2,9 +2,11 @@ package kr.mdns.madness.interceptor;
 
 import java.util.Map;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +25,7 @@ public class JwtHandShakeInterceptor implements HandshakeInterceptor {
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
             Map<String, Object> attributes) throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(auth);
         if (auth == null
                 || !auth.isAuthenticated()
                 || auth instanceof AnonymousAuthenticationToken) {
