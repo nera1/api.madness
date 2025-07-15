@@ -28,7 +28,6 @@ public class ChannelConnectionCountService {
     }
 
     public boolean addSubscription(String publicId, Long userId, String subscriptionId) {
-        @SuppressWarnings("unchecked")
         Map<Long, Set<String>> userMap = cache().get(publicId, Map.class);
 
         if (userMap == null) {
@@ -54,7 +53,6 @@ public class ChannelConnectionCountService {
     }
 
     public boolean removeSubscription(String publicId, Long userId, String subscriptionId) {
-        @SuppressWarnings("unchecked")
         Map<Long, Set<String>> userMap = cache().get(publicId, Map.class);
 
         if (userMap == null) {
@@ -89,7 +87,6 @@ public class ChannelConnectionCountService {
     }
 
     public int getSubscriptionCount(String publicId, Long userId) {
-        @SuppressWarnings("unchecked")
         Map<Long, Set<String>> userMap = cache().get(publicId, Map.class);
         if (userMap == null || !userMap.containsKey(userId)) {
             return 0;
@@ -103,7 +100,6 @@ public class ChannelConnectionCountService {
     }
 
     public Set<Long> getUserIds(String publicId) {
-        @SuppressWarnings("unchecked")
         Map<Long, Set<String>> userMap = cache().get(publicId, Map.class);
         return userMap == null
                 ? Set.of()
