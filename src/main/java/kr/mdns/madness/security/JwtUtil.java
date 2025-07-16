@@ -75,4 +75,16 @@ public class JwtUtil {
             return false;
         }
     }
+
+    public Claims parseClaims(String token) {
+        Jws<Claims> jws = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token);
+        return jws.getBody();
+    }
+
+    public Date getExpirationDate(String token) {
+        return parseClaims(token).getExpiration();
+    }
 }
