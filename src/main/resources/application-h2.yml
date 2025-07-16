@@ -12,7 +12,7 @@ spring:
 
 jwt:
   secret: sr4pAFdtvtGl2DG3CfKnikpSRaXPf0S7aKkLUsbkJic=
-  access-exp-ms: 100000
+  access-exp-ms: 10000
   refresh-exp-sec: 1209600
 
   h2:

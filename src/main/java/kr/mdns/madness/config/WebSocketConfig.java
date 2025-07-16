@@ -10,6 +10,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 import kr.mdns.madness.interceptor.ChannelConnectionCountInterceptor;
+import kr.mdns.madness.interceptor.JwtAuthInterceptor;
 import kr.mdns.madness.interceptor.JwtHandShakeInterceptor;
 import kr.mdns.madness.interceptor.StompAuthInterceptor;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final ChannelConnectionCountInterceptor channelConnectionCountInterceptor;
     private final JwtHandShakeInterceptor jwtHandShakeInterceptor;
     private final StompAuthInterceptor stompAuthInterceptor;
+    private final JwtAuthInterceptor jwtAuthInterceptor;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -35,7 +37,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(stompAuthInterceptor, channelConnectionCountInterceptor);
+        registration.interceptors(jwtAuthInterceptor, stompAuthInterceptor, channelConnectionCountInterceptor);
     }
 
     @Override

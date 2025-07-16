@@ -44,4 +44,9 @@ public class WebSocketConfigDev implements WebSocketMessageBrokerConfigurer {
         config.enableSimpleBroker("/sub");
         config.setApplicationDestinationPrefixes("/pub");
     }
+
+    @Override
+    public void configureClientOutboundChannel(ChannelRegistration registration) {
+        registration.interceptors(jwtAuthInterceptor);
+    }
 }

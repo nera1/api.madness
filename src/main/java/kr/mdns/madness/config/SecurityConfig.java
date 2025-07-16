@@ -33,12 +33,6 @@ public class SecurityConfig {
         private final CustomUserDetailsService userDetailsService;
         private final SecurityExceptionHandler securityExceptionHandler;
 
-        // public SecurityConfig(JwtUtil jwtUtil, CustomUserDetailsService
-        // userDetailsService) {
-        // this.jwtUtil = jwtUtil;
-        // this.userDetailsService = userDetailsService;
-        // }
-
         @Bean
         public WebSecurityCustomizer h2Ignore() {
                 return web -> web.ignoring()
