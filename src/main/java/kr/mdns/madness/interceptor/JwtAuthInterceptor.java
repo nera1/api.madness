@@ -27,32 +27,17 @@ public class JwtAuthInterceptor implements ChannelInterceptor {
         if (StompCommand.SEND.equals(command) || StompCommand.SUBSCRIBE.equals(command)) {
 
             if (sessionAttrs == null || !sessionAttrs.containsKey("tokenExpiry")) {
-                return buildErrorFrame(
-                        "인증 정보가 없습니다. 다시 로그인해주세요.",
-                        "token_expired",
-                        accessor);
+                throw new MessagingException("401");
             }
 
             Instant expiry = (Instant) sessionAttrs.get("tokenExpiry");
 
             if (expiry != null && Instant.now().isAfter(expiry)) {
-                return buildErrorFrame(
-                        "인증 정보가 없습니다. 다시 로그인해주세요.",
-                        "token_expired",
-                        accessor);
+                throw new MessagingException("401");
             }
         }
 
         return ChannelInterceptor.super.preSend(message, channel);
-    }
-
-    private Message<byte[]> buildErrorFrame(String userMsg, String code, StompHeaderAccessor orig) {
-        StompHeaderAccessor err = StompHeaderAccessor.create(StompCommand.ERROR);
-        err.setLeaveMutable(true);
-        err.setSessionId(orig.getSessionId()); // 이 세션으로만 전송
-        err.setMessage(userMsg);
-        err.setHeader("errorCode", code);
-        return MessageBuilder.createMessage(new byte[0], err.getMessageHeaders());
     }
 
 }
