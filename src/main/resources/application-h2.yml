@@ -20,7 +20,6 @@ jwt:
       enabled: true
       path: /h2-console
 
-# ↓ 여기에 앱 쿠키 설정 추가 (dev 모드)
 app:
   cookie:
     secure: false
