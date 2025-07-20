@@ -90,4 +90,10 @@ public class ChannelController {
                 return ResponseEntity.ok().build();
         }
 
+        @GetMapping("/top")
+        public ResponseEntity<ApiResponse<List<ChannelDto>>> getMethodName(@RequestParam(required = true) int size) {
+                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                                .body(ApiResponse.of(0, "", channelService.getTopChannels(size)));
+        }
+
 }

@@ -1,5 +1,6 @@
 package kr.mdns.madness.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,5 +36,7 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
             @Param("cursor") String cursor,
             @Param("asc") boolean asc,
             @Param("size") int size);
+
+    List<Channel> findAllByPublicIdIn(Collection<String> publicIds);
 
 }

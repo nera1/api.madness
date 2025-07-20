@@ -1,7 +1,10 @@
 package kr.mdns.madness.services;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
@@ -46,11 +49,12 @@ public class ChannelService {
                 Channel saved = channelRepository.save(channel);
 
                 ChannelMember cm = ChannelMember.builder()
-                                .publicChannelId(saved.getPublicId()) // ← 추가
+                                .publicChannelId(saved.getPublicId())
                                 .memberId(creator.getId())
                                 .build();
 
                 channelMemberRepository.save(cm);
+                channelMemberService.evictJoinedChannelIds(userId);
 
                 return ChannelResponseDto.builder()
                                 .publicId(saved.getPublicId())
@@ -136,6 +140,29 @@ public class ChannelService {
                                 .creatorNickname(creator.getNickname())
                                 .createdAt(channel.getCreatedAt())
                                 .build();
+        }
+
+        public List<ChannelDto> getTopChannels(int topN) {
+                List<String> topPublicIds = channelConnectionCountService.getTopChannels(topN);
+
+                if (topPublicIds.isEmpty()) {
+                        return Collections.emptyList();
+                }
+
+                List<Channel> channels = channelRepository.findAllByPublicIdIn(topPublicIds);
+
+                Map<String, Channel> channelMap = channels.stream()
+                                .collect(Collectors.toMap(Channel::getPublicId, channel -> channel));
+
+                return topPublicIds.stream()
+                                .map(channelMap::get)
+                                .filter(Objects::nonNull)
+                                .map(ch -> ChannelDto.builder().publicId(ch.getPublicId()).name(ch.getName())
+                                                .createdAt(ch.getCreatedAt())
+                                                .participants(channelConnectionCountService
+                                                                .getUserCount(ch.getPublicId()))
+                                                .build())
+                                .collect(Collectors.toList());
         }
 
 }

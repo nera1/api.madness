@@ -1,9 +1,12 @@
 package kr.mdns.madness.services;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -97,6 +100,17 @@ public class ChannelConnectionCountService {
     public int getUserCount(String publicId) {
         AtomicInteger cnt = userCountMap.get(publicId);
         return cnt == null ? 0 : cnt.get();
+    }
+
+    public List<String> getTopChannels(int topN) {
+        return userCountMap.entrySet().stream()
+                .sorted(Comparator
+                        .comparingInt((Map.Entry<String, AtomicInteger> e) -> e.getValue().get())
+                        .reversed()
+                        .thenComparing(Map.Entry.<String, AtomicInteger>comparingByKey(Comparator.reverseOrder())))
+                .limit(topN)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
     public Set<Long> getUserIds(String publicId) {

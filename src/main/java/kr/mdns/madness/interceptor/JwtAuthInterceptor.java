@@ -26,12 +26,14 @@ public class JwtAuthInterceptor implements ChannelInterceptor {
         if (StompCommand.SEND.equals(command) || StompCommand.SUBSCRIBE.equals(command)) {
 
             if (sessionAttrs == null || !sessionAttrs.containsKey("tokenExpiry")) {
+                System.out.println("HERE 1");
                 throw new MessagingException("401");
             }
 
             Instant expiry = (Instant) sessionAttrs.get("tokenExpiry");
 
             if (expiry != null && Instant.now().isAfter(expiry)) {
+                System.out.println("HERE 2");
                 throw new MessagingException("401");
             }
         }
