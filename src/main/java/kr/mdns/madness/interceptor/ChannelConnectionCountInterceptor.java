@@ -44,9 +44,12 @@ public class ChannelConnectionCountInterceptor implements ChannelInterceptor {
             return;
         }
         if (StompCommand.UNSUBSCRIBE.equals(cmd)) {
+            int prev = channelConnectionCountService.getUserCount(publicId);
+            System.out.println(prev);
             channelConnectionCountService.removeSubscription(
                     publicId, userId, randomId);
-            channelConnectionCountService.getUserCount(publicId);
+            int next = channelConnectionCountService.getUserCount(publicId);
+            System.out.println(next);
             return;
         }
 
