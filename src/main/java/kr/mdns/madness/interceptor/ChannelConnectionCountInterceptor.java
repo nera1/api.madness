@@ -38,18 +38,15 @@ public class ChannelConnectionCountInterceptor implements ChannelInterceptor {
                 .getPrincipal()).getId();
 
         if (StompCommand.SUBSCRIBE.equals(cmd)) {
+            System.out.println("add : " + randomId);
             channelConnectionCountService.addSubscription(
                     publicId, userId, randomId);
-            channelConnectionCountService.getUserCount(publicId);
             return;
         }
         if (StompCommand.UNSUBSCRIBE.equals(cmd)) {
-            int prev = channelConnectionCountService.getUserCount(publicId);
-            System.out.println(prev);
+            System.out.println("removed : " + randomId);
             channelConnectionCountService.removeSubscription(
                     publicId, userId, randomId);
-            int next = channelConnectionCountService.getUserCount(publicId);
-            System.out.println(next);
             return;
         }
 

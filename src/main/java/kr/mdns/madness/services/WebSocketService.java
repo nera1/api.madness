@@ -47,16 +47,16 @@ public class WebSocketService {
             throw new IllegalArgumentException("잘못된 subscriptionId: " + subscriptionId);
         }
 
-        int lastDash = subscriptionId.lastIndexOf('-');
-        if (lastDash <= prefix.length()) {
+        int lastColon = subscriptionId.lastIndexOf(':');
+        if (lastColon <= prefix.length()) {
             throw new IllegalArgumentException("잘못된 subscriptionId: " + subscriptionId);
         }
 
-        return subscriptionId.substring(prefix.length(), lastDash);
+        return subscriptionId.substring(prefix.length(), lastColon);
     }
 
     public String extractRandomIdFromSubscriptionId(String subscriptionId) {
-        int idx = subscriptionId.lastIndexOf('-');
+        int idx = subscriptionId.lastIndexOf(':');
         if (idx < 0 || idx == subscriptionId.length() - 1) {
             throw new IllegalArgumentException("잘못된 subscriptionId: " + subscriptionId);
         }
