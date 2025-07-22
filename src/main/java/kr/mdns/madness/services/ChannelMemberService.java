@@ -3,6 +3,7 @@ package kr.mdns.madness.services;
 import org.springframework.stereotype.Service;
 
 import kr.mdns.madness.repository.ChannelMemberRepository;
+import kr.mdns.madness.repository.ChannelRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.cache.annotation.CacheEvict;

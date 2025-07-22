@@ -102,7 +102,7 @@ public class ChannelConnectionCountService {
         return cnt == null ? 0 : cnt.get();
     }
 
-    public List<String> getTopChannels(int topN) {
+    public List<String> getTopNParticipantChannels(int topN) {
         return userCountMap.entrySet().stream()
                 .sorted(Comparator
                         .comparingInt((Map.Entry<String, AtomicInteger> e) -> e.getValue().get())

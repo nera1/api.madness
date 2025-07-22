@@ -7,6 +7,8 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,7 +90,7 @@ public class ChannelService {
                                 .memberId(member.getId())
                                 .build();
                 channelMemberRepository.save(channelMember);
-
+                channelRepository.incrementMemberCount(publicChannelId);
                 channelMemberService.evictJoinedChannelIds(memberId);
 
                 return channelMember;
@@ -98,8 +100,13 @@ public class ChannelService {
                 List<Channel> channels = channelRepository.search(keyword, cursor, asc, size);
 
                 return channels.stream()
-                                .map(c -> new ChannelDto(c.getPublicId(), c.getName(), c.getCreatedAt(),
-                                                channelConnectionCountService.getUserCount(c.getPublicId())))
+                                .map(c -> ChannelDto.builder()
+                                                .name(c.getName())
+                                                .publicId(c.getPublicId())
+                                                .createdAt(c.getCreatedAt())
+                                                .participants(channelConnectionCountService
+                                                                .getUserCount(c.getPublicId()))
+                                                .build())
                                 .collect(Collectors.toList());
         }
 
@@ -142,8 +149,8 @@ public class ChannelService {
                                 .build();
         }
 
-        public List<ChannelDto> getTopChannels(int topN) {
-                List<String> topPublicIds = channelConnectionCountService.getTopChannels(topN);
+        public List<ChannelDto> getTopNParticipantChannels(int topN) {
+                List<String> topPublicIds = channelConnectionCountService.getTopNParticipantChannels(topN);
 
                 if (topPublicIds.isEmpty()) {
                         return Collections.emptyList();
@@ -165,4 +172,28 @@ public class ChannelService {
                                 .collect(Collectors.toList());
         }
 
+        @Cacheable(value = "topNMemberJoinedChannels", key = "#topN")
+        @Transactional(readOnly = true)
+        public List<ChannelDto> getTopMemberJoinedChannels(int topN) {
+                return findTopMemberJoinedChannels(topN);
+        }
+
+        @CachePut(value = "topNMemberJoinedChannels", key = "#topN")
+        @Transactional(readOnly = true)
+        public List<ChannelDto> refreshTopMemberJoinedChannels(int topN) {
+                return findTopMemberJoinedChannels(topN);
+        }
+
+        private List<ChannelDto> findTopMemberJoinedChannels(int topN) {
+                List<Channel> channels = channelRepository.findTopMemberJoinedChannels(topN);
+                return channels.stream()
+                                .map(c -> ChannelDto.builder()
+                                                .publicId(c.getPublicId())
+                                                .name(c.getName())
+                                                .createdAt(c.getCreatedAt())
+                                                .participants(channelConnectionCountService
+                                                                .getUserCount(c.getPublicId()))
+                                                .build())
+                                .collect(Collectors.toList());
+        }
 }

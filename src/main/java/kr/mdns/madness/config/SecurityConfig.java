@@ -67,7 +67,7 @@ public class SecurityConfig {
                                                                 "/auth/refresh",
                                                                 "/member",
                                                                 "/channel/search",
-                                                                "/channel/top",
+                                                                "/channel/top/**",
                                                                 "/member/check/**")
                                                 .permitAll()
                                                 .anyRequest().authenticated())

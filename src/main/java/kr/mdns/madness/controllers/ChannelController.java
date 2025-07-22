@@ -90,10 +90,18 @@ public class ChannelController {
                 return ResponseEntity.ok().build();
         }
 
-        @GetMapping("/top")
-        public ResponseEntity<ApiResponse<List<ChannelDto>>> getMethodName(@RequestParam(required = true) int size) {
+        @GetMapping("/top/participants")
+        public ResponseEntity<ApiResponse<List<ChannelDto>>> getTopNParticipantChannels(
+                        @RequestParam(required = true) int size) {
                 return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                                .body(ApiResponse.of(0, "", channelService.getTopChannels(size)));
+                                .body(ApiResponse.of(0, "", channelService.getTopNParticipantChannels(size)));
+        }
+
+        @GetMapping("/top/members")
+        public ResponseEntity<ApiResponse<List<ChannelDto>>> getTopNMemberChannels(
+                        @RequestParam(required = true) int size) {
+                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                                .body(ApiResponse.of(0, "", channelService.getTopMemberJoinedChannels(size)));
         }
 
 }

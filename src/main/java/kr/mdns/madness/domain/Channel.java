@@ -8,7 +8,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "channels", indexes = @Index(name = "idx_channel_public_id", columnList = "public_id"))
+@Table(name = "channels", indexes = {
+        @Index(name = "idx_channel_public_id", columnList = "public_id"),
+        @Index(name = "idx_channel_member_count", columnList = "member_count") })
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,6 +29,9 @@ public class Channel {
 
     @Column(name = "creator_id", nullable = false)
     private Long creatorId;
+
+    @Column(name = "member_count", nullable = false)
+    private int memberCount;
 
     @CreationTimestamp
     @Column(updatable = false)
