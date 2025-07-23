@@ -13,6 +13,6 @@ public class ChannelScheduler {
 
     @Scheduled(cron = "*/10 * * * * *", zone = "Asia/Seoul")
     public void refreshTopMemberJoinedChannelsCache() {
-        channelService.getTopMemberJoinedChannels(10);
+        channelService.refreshTopMemberJoinedChannels(10);
     }
 }

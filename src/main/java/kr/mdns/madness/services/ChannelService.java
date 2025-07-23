@@ -89,6 +89,7 @@ public class ChannelService {
                                 .publicChannelId(channel.getPublicId())
                                 .memberId(member.getId())
                                 .build();
+
                 channelMemberRepository.save(channelMember);
                 channelRepository.incrementMemberCount(publicChannelId);
                 channelMemberService.evictJoinedChannelIds(memberId);
@@ -172,6 +173,14 @@ public class ChannelService {
                                 .collect(Collectors.toList());
         }
 
+        public int incrementMemberCount(String publicId) {
+                return channelRepository.incrementMemberCount(publicId);
+        }
+
+        public int decrementMemberCount(String publicId) {
+                return channelRepository.decrementMemberCount(publicId);
+        }
+
         @Cacheable(value = "topNMemberJoinedChannels", key = "#topN")
         @Transactional(readOnly = true)
         public List<ChannelDto> getTopMemberJoinedChannels(int topN) {
@@ -193,6 +202,7 @@ public class ChannelService {
                                                 .createdAt(c.getCreatedAt())
                                                 .participants(channelConnectionCountService
                                                                 .getUserCount(c.getPublicId()))
+                                                .memberCount(c.getMemberCount())
                                                 .build())
                                 .collect(Collectors.toList());
         }
