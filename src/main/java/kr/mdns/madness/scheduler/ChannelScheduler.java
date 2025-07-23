@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 public class ChannelScheduler {
     private final ChannelService channelService;
 
-    @Scheduled(cron = "*/10 * * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
     public void refreshTopMemberJoinedChannelsCache() {
         channelService.refreshTopMemberJoinedChannels(10);
     }
