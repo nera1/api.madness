@@ -56,6 +56,7 @@ public class ChannelService {
                                 .build();
 
                 channelMemberRepository.save(cm);
+                channelRepository.incrementMemberCount(saved.getPublicId());
                 channelMemberService.evictJoinedChannelIds(userId);
 
                 return ChannelResponseDto.builder()
