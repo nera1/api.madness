@@ -2,6 +2,7 @@ package kr.mdns.madness.interceptor;
 
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
@@ -20,33 +21,30 @@ public class ChannelConnectionCountInterceptor implements ChannelInterceptor {
     private final WebSocketService webSocketService;
 
     @Override
-    public void postSend(Message<?> message, MessageChannel channel, boolean sent) {
+    public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         StompCommand cmd = accessor.getCommand();
 
-        String subscriptionIdFull = accessor.getSubscriptionId();
-        if (subscriptionIdFull == null) {
-            return;
+        if (cmd == StompCommand.SUBSCRIBE || cmd == StompCommand.UNSUBSCRIBE) {
+            String subscriptionIdFull = accessor.getSubscriptionId();
+
+            String publicId = webSocketService
+                    .extractPublicChannelIdFromSubscriptionId(subscriptionIdFull);
+            String randomId = webSocketService
+                    .extractRandomIdFromSubscriptionId(subscriptionIdFull);
+
+            Long userId = ((CustomUserDetails) ((Authentication) accessor.getUser())
+                    .getPrincipal()).getId();
+
+            if (StompCommand.SUBSCRIBE.equals(cmd)) {
+                channelConnectionCountService.addSubscription(
+                        publicId, userId, randomId);
+            }
+            if (StompCommand.UNSUBSCRIBE.equals(cmd)) {
+                channelConnectionCountService.removeSubscription(
+                        publicId, userId, randomId);
+            }
         }
-
-        String publicId = webSocketService
-                .extractPublicChannelIdFromSubscriptionId(subscriptionIdFull);
-        String randomId = webSocketService
-                .extractRandomIdFromSubscriptionId(subscriptionIdFull);
-
-        Long userId = ((CustomUserDetails) ((Authentication) accessor.getUser())
-                .getPrincipal()).getId();
-
-        if (StompCommand.SUBSCRIBE.equals(cmd)) {
-            channelConnectionCountService.addSubscription(
-                    publicId, userId, randomId);
-            return;
-        }
-        if (StompCommand.UNSUBSCRIBE.equals(cmd)) {
-            channelConnectionCountService.removeSubscription(
-                    publicId, userId, randomId);
-            return;
-        }
-
+        return ChannelInterceptor.super.preSend(message, channel);
     }
 }
