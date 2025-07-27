@@ -4,116 +4,70 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.stereotype.Service;
 
+import com.github.benmanes.caffeine.cache.Cache;
+
+import kr.mdns.madness.record.SubscriptionKey;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class ChannelConnectionCountService {
-    private static final String CACHE_NAME = "channelConnectedCount";
 
-    private final CacheManager cacheManager;
-
-    private Cache cache() {
-        Cache c = cacheManager.getCache(CACHE_NAME);
-        if (c == null) {
-            throw new IllegalStateException("Cache '" + CACHE_NAME + "' is not configured");
-        }
-        return c;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Map<Long, Set<String>> getUserMap(String publicId) {
-        Cache.ValueWrapper wrapper = cache().get(publicId);
-        return (wrapper == null)
-                ? null
-                : (Map<Long, Set<String>>) wrapper.get();
-    }
+    private final Cache<SubscriptionKey, Boolean> subscriptionCache;
 
     public boolean addSubscription(String publicId, Long userId, String subscriptionId) {
-        Map<Long, Set<String>> userMap = getUserMap(publicId);
-        if (userMap == null) {
-            userMap = new ConcurrentHashMap<>();
-        }
+        SubscriptionKey key = new SubscriptionKey(publicId, userId, subscriptionId);
+        boolean isFirst = subscriptionCache.asMap().keySet().stream()
+                .noneMatch(k -> k.publicId().equals(publicId) && k.userId().equals(userId));
 
-        Set<String> subs = userMap.computeIfAbsent(userId, id -> ConcurrentHashMap.newKeySet());
-        boolean firstTab = subs.isEmpty();
-        subs.add(subscriptionId);
-
-        cache().put(publicId, userMap);
-        return firstTab;
+        subscriptionCache.put(key, Boolean.TRUE);
+        return isFirst;
     }
 
     public boolean removeSubscription(String publicId, Long userId, String subscriptionId) {
-        Map<Long, Set<String>> userMap = getUserMap(publicId);
-        if (userMap == null) {
-            return false;
-        }
+        SubscriptionKey key = new SubscriptionKey(publicId, userId, subscriptionId);
+        subscriptionCache.invalidate(key);
 
-        Set<String> subs = userMap.get(userId);
-        if (subs == null) {
-            return false;
-        }
-
-        subs.remove(subscriptionId);
-        boolean lastTab = subs.isEmpty();
-        if (lastTab) {
-            userMap.remove(userId);
-        }
-
-        if (userMap.isEmpty()) {
-            cache().evict(publicId);
-        } else {
-            cache().put(publicId, userMap);
-        }
-
-        return lastTab;
+        return subscriptionCache.asMap().keySet().stream()
+                .noneMatch(k -> k.publicId().equals(publicId) && k.userId().equals(userId));
     }
 
     public int getSubscriptionCount(String publicId, Long userId) {
-        Map<Long, Set<String>> userMap = getUserMap(publicId);
-        if (userMap == null || !userMap.containsKey(userId)) {
-            return 0;
-        }
-        return userMap.get(userId).size();
+        return (int) subscriptionCache.asMap().keySet().stream()
+                .filter(k -> k.publicId().equals(publicId) && k.userId().equals(userId))
+                .count();
     }
 
     public int getUserCount(String publicId) {
-        Map<Long, Set<String>> userMap = getUserMap(publicId);
-        return (userMap == null) ? 0 : userMap.size();
+        return (int) subscriptionCache.asMap().keySet().stream()
+                .filter(k -> k.publicId().equals(publicId))
+                .map(SubscriptionKey::userId)
+                .distinct()
+                .count();
     }
 
     public List<String> getTopNParticipantChannels(int topN) {
-        Cache springCache = cache();
-        if (!(springCache instanceof CaffeineCache)) {
-            throw new IllegalStateException(
-                    "Cache '" + CACHE_NAME + "' is not a CaffeineCache");
-        }
-        CaffeineCache caffeineCache = (CaffeineCache) springCache;
+        Map<String, Set<Long>> grouped = subscriptionCache.asMap().keySet().stream()
+                .collect(Collectors.groupingBy(
+                        SubscriptionKey::publicId,
+                        Collectors.mapping(SubscriptionKey::userId, Collectors.toSet())));
 
-        var nativeMap = caffeineCache.getNativeCache().asMap();
-
-        return nativeMap.keySet().stream()
-                .map(Object::toString)
-                .sorted(Comparator
-                        .comparingInt(this::getUserCount)
-                        .reversed()
-                        .thenComparing(Comparator.reverseOrder()))
+        return grouped.entrySet().stream()
+                .sorted(Comparator.comparingInt((Map.Entry<String, Set<Long>> e) -> e.getValue().size())
+                        .reversed())
                 .limit(topN)
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
 
     public Set<Long> getUserIds(String publicId) {
-        Map<Long, Set<String>> userMap = getUserMap(publicId);
-        return (userMap == null)
-                ? Set.of()
-                : userMap.keySet();
+        return subscriptionCache.asMap().keySet().stream()
+                .filter(k -> k.publicId().equals(publicId))
+                .map(SubscriptionKey::userId)
+                .collect(Collectors.toSet());
     }
 }

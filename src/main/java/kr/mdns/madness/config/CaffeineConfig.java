@@ -13,33 +13,34 @@ import org.springframework.context.annotation.Configuration;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 
+import kr.mdns.madness.record.SubscriptionKey;
+
 @Configuration
 @EnableCaching
 public class CaffeineConfig {
 
         @Bean
         public CacheManager cacheManager() {
-                // 1) TTL 적용된 빌더: expireAfterWrite 5분
-                Caffeine<Object, Object> ttlBuilder = Caffeine.newBuilder()
-                                .maximumSize(10_000)
-                                .expireAfterWrite(Duration.ofMinutes(5));
-
-                // 2) 만료기 없는 빌더
-                Caffeine<Object, Object> noTtlBuilder = Caffeine.newBuilder()
+                Caffeine<Object, Object> baseBuilder = Caffeine.newBuilder()
                                 .maximumSize(10_000);
 
-                // 각각의 CaffeineCache 에서 build() 호출
                 Cache joinedChannels = new CaffeineCache(
-                                "joinedChannels", ttlBuilder.build());
-                Cache channelConnectedCount = new CaffeineCache(
-                                "channelConnectedCount", ttlBuilder.build());
+                                "joinedChannels",
+                                baseBuilder.build());
                 Cache topNMemberJoinedChannels = new CaffeineCache(
-                                "topNMemberJoinedChannels", noTtlBuilder.build());
+                                "topNMemberJoinedChannels",
+                                baseBuilder.build());
 
-                // SimpleCacheManager 에 직접 등록
                 SimpleCacheManager manager = new SimpleCacheManager();
-                manager.setCaches(
-                                List.of(joinedChannels, channelConnectedCount, topNMemberJoinedChannels));
+                manager.setCaches(List.of(joinedChannels, topNMemberJoinedChannels));
                 return manager;
+        }
+
+        @Bean
+        public com.github.benmanes.caffeine.cache.Cache<SubscriptionKey, Boolean> subscriptionCache() {
+                return Caffeine.newBuilder()
+                                .maximumSize(100_000)
+                                .expireAfterWrite(Duration.ofMinutes(2))
+                                .build();
         }
 }
