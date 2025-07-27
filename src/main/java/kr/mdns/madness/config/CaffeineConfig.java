@@ -40,7 +40,7 @@ public class CaffeineConfig {
         public com.github.benmanes.caffeine.cache.Cache<SubscriptionKey, Boolean> subscriptionCache() {
                 return Caffeine.newBuilder()
                                 .maximumSize(100_000)
-                                .expireAfterWrite(Duration.ofMinutes(2))
+                                .expireAfterWrite(Duration.ofMinutes(30))
                                 .build();
         }
 }
