@@ -7,14 +7,14 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 
-import kr.mdns.madness.services.ChannelAuthrizationService;
+import kr.mdns.madness.services.ChannelAuthorizationService;
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class StompAuthInterceptor implements ChannelInterceptor {
 
-    private final ChannelAuthrizationService channelAuthrizationService;
+    private final ChannelAuthorizationService channelAuthrizationService;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {

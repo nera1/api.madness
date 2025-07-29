@@ -2,71 +2,64 @@
 
 # api.madness
 
-## 개요
+## 설명
 
-채팅 웹 어플리케이션 **Madness** 백엔드 서버
+Spring Boot 기반의 실시간 채팅 백엔드 서비스입니다
+JWT 인증·인가, STOMP/WebSocket 채팅서비스를 제공합니다
+
+## 구조
+
+![madness](structure.png)
 
 ## 주요 기능
 
-- **JWT 기반 인증 및 인가**
-  - 사용자 로그인 시 발급되는 Access Token/Refresh Token을 통해 인증 처리
-  - Spring Security와 JWT를 결합하여 권한(Role)에 따른 API 접근 제어
-- **웹소켓 채팅 기능**
-  - STOMP 프로토콜을 이용한 메시지 송수신
-  - 실시간 채팅 룸 관리 및 메시지 브로드캐스트
+- **JWT 인증·인가**  
+  Access/Refresh 토큰으로 로그인·권한 관리
+- **실시간 채팅**  
+  STOMP(SockJS) 프로토콜 기반 메시지 송수신
+- **채널 관리**  
+  채널 생성·조회·참여자 집계
 
 ## 기술 스택
 
-- **언어 & 프레임워크**
-  - Java 17, Spring Boot 3.4.2
+- **언어**: Java 17
+- **프레임워크**: Spring Boot 3.4.2
+- **라이브러리**:
   - Spring Security
-  - Spring Web, Spring WebSocket
+  - Spring WebSocket (STOMP/SockJS)
   - Spring Data JPA
-  - QueryDSL
-- **데이터베이스**
-  - PostgreSQL(Production)
-  - H2(Development)
-- **빌드 도구 & 의존성 관리**
-  - Gradle
-- **JWT 라이브러리**
-  - io.jsonwebtoken (JJWT)
-- **메시징 & 웹소켓**
-  - Spring Messaging (STOMP, SockJS)
-- **테스트**
-  - JUnit 5, Mockito
-- **배포 & 인프라**
-  - Cloudtype
-  - GitHub Actions (CI/CD)
+  - Caffeine
+  - JJWT (JWT 처리)
+- **DB**: PostgreSQL (운영), H2 (개발)
+- **빌드**: Gradle
+- **테스트**: JUnit 5, Mockito
+- **인프라**: Cloudtype, GitHub Actions (CI/CD), Supabase (PostgreSQL)
 
 ## 환경 변수
 
-### Local(Development)
-
 ```bash
+# Local (Development)
 DEV_DB_URL=
 DEV_DB_USERNAME=
 DEV_DB_PASSWORD=
 DEV_JWT_SECRET=
 DEV_JWT_EXP_MS=
 DEV_JWT_REFRESH_EXP_SEC=
-```
 
-### Production
-
-```bash
+# Production
 SPRING_PROFILES_ACTIVE=prod
-MD_JWT_EXP_MS=
-MD_JWT_REFRESH_EXP_SEC=
-MD_JWT_SECRET=
-MD_PASSWORD=
 MD_URL=
 MD_USERNAME=
+MD_PASSWORD=
+MD_JWT_SECRET=
+MD_JWT_EXP_MS=
+MD_JWT_REFRESH_EXP_SEC=
 ```
 
 ## 도메인
 
-[api.madn.es](https://api.madn.es)
+[https://api.madn.es](https://api.madn.es)
 
-## Contact
+## 문의
 
-Email: nera4936@gmail.com
+- Email: [nera4936@gmail.com](mailto:nera4936@gmail.com)

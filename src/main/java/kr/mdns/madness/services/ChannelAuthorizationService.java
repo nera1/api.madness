@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class ChannelAuthrizationService {
+public class ChannelAuthorizationService {
     private final ChannelMemberService channelMemberService;
     private final WebSocketService webSocketService;
 
