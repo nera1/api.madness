@@ -4,7 +4,7 @@
 
 ## 설명
 
-Spring Boot 기반의 실시간 채팅 백엔드 서비스입니다
+Spring Boot 기반의 실시간 채팅 백엔드 서비스입니다  
 JWT 인증·인가, STOMP/WebSocket 채팅서비스를 제공합니다
 
 ## 구조
@@ -48,17 +48,19 @@ DEV_JWT_REFRESH_EXP_SEC=
 
 # Production
 SPRING_PROFILES_ACTIVE=prod
-MD_URL=
-MD_USERNAME=
-MD_PASSWORD=
-MD_JWT_SECRET=
 MD_JWT_EXP_MS=
 MD_JWT_REFRESH_EXP_SEC=
+MD_JWT_SECRET=
+MD_PASSWORD=
+MD_URL=
+MD_USERNAME=
 ```
 
 ## 도메인
 
 [https://api.madn.es](https://api.madn.es)
+
+[Madness](https://madn.es)
 
 ## 문의
 
