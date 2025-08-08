@@ -10,7 +10,9 @@ import lombok.*;
 @Entity
 @Table(name = "channels", indexes = {
         @Index(name = "idx_channel_public_id", columnList = "public_id"),
-        @Index(name = "idx_channel_member_count", columnList = "member_count") })
+        @Index(name = "idx_channel_member_count", columnList = "member_count"),
+        @Index(name = "idx_channel_name", columnList = "name")
+})
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
