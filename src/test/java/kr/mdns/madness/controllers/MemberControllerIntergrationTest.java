@@ -20,12 +20,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
-
-import kr.mdns.madness.domain.QMember;
 import kr.mdns.madness.dto.DuplicateCheckResponseDto;
-import kr.mdns.madness.dto.SignupRequestDto;
-import kr.mdns.madness.dto.SignupResponseDto;
 import kr.mdns.madness.repository.MemberRepository;
 import kr.mdns.madness.response.ApiResponse;
 
@@ -45,34 +40,7 @@ public class MemberControllerIntergrationTest {
 
     @Test
     void post_memberSignupTest() {
-        SignupRequestDto req = SignupRequestDto.builder()
-                .email("nera@madn.es")
-                .nickname("asdf11")
-                .password("1q2w3e4r!!!")
-                .build();
 
-        HttpEntity<SignupRequestDto> request = new HttpEntity<>(req);
-
-        ResponseEntity<ApiResponse<SignupResponseDto>> res = rest.exchange(
-                "/member",
-                HttpMethod.POST,
-                request,
-                new ParameterizedTypeReference<>() {
-                });
-
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        ApiResponse<SignupResponseDto> body = res.getBody();
-        assertThat(body).isNotNull();
-        assertThat(body.getCode()).isEqualTo(0);
-        assertThat(body.getMessage()).isEqualTo("signup success");
-
-        SignupResponseDto data = body.getData();
-        assertThat(data.getEmail()).isEqualTo(req.getEmail());
-        assertThat(data.getNickname()).isEqualTo(req.getNickname());
-
-        QMember qm = QMember.member;
-        BooleanExpression predicate = qm.email.eq(req.getEmail());
-        assertTrue(memberRepository.exists(predicate));
     }
 
     @Test

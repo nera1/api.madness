@@ -4,10 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
-
 import kr.mdns.madness.domain.Member;
-import kr.mdns.madness.domain.QMember;
 import kr.mdns.madness.dto.SignupRequestDto;
 import kr.mdns.madness.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,15 +17,11 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     public boolean isEmailDuplicate(String email) {
-        QMember m = QMember.member;
-        BooleanExpression predicate = m.email.eq(email);
-        return memberRepository.exists(predicate);
+        return memberRepository.existsByEmail(email);
     }
 
     public boolean isNicknameDuplicate(String nickname) {
-        QMember m = QMember.member;
-        BooleanExpression predicate = m.nickname.equalsIgnoreCase(nickname);
-        return memberRepository.exists(predicate);
+        return memberRepository.existsByNickname(nickname);
     }
 
     @Transactional

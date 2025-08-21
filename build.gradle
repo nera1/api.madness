@@ -43,12 +43,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.security:spring-security-crypto'
 
-    // --- Querydsl Jakarta 버전으로 통일 ---
-    implementation           "com.querydsl:querydsl-jpa:${querydslVersion}:jakarta"
-    annotationProcessor     "com.querydsl:querydsl-apt:${querydslVersion}:jakarta"
-    testAnnotationProcessor "com.querydsl:querydsl-apt:${querydslVersion}:jakarta"
-    annotationProcessor "jakarta.persistence:jakarta.persistence-api:3.1.0"
-
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'org.postgresql:postgresql'
@@ -69,13 +63,4 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
-}
-
-//--- Q-타입 소스 인식용 (선택) ---
-sourceSets {
-    main {
-        java {
-            srcDirs += 'build/generated/sources/annotationProcessor/java/main'
-        }
-    }
 }

@@ -2,7 +2,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   datasource:
     url: ${MD_URL}?prepareThreshold=0&preferQueryMode=simple
     username: ${MD_USERNAME}
