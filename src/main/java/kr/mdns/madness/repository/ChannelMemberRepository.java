@@ -9,5 +9,7 @@ import kr.mdns.madness.domain.ChannelMember;
 public interface ChannelMemberRepository extends JpaRepository<ChannelMember, Long> {
     boolean existsByPublicChannelIdAndMemberId(String publicChannelId, Long memberId);
 
+    long deleteByPublicChannelIdAndMemberId(String publicChannelId, Long memberId);
+
     List<ChannelMember> findByMemberId(Long memberId);
 }

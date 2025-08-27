@@ -98,6 +98,20 @@ public class ChannelService {
                 return channelMember;
         }
 
+        @Transactional
+        public boolean leave(String publicChannelId, Long memberId) {
+                long deleted = channelMemberRepository
+                                .deleteByPublicChannelIdAndMemberId(publicChannelId, memberId);
+
+                if (deleted > 0) {
+                        channelRepository.decrementMemberCount(publicChannelId);
+                }
+
+                channelMemberService.evictJoinedChannelIds(memberId);
+
+                return deleted > 0;
+        }
+
         public List<ChannelDto> searchChannels(String keyword, String cursor, int size, boolean asc) {
                 List<Channel> channels = channelRepository.search(keyword, cursor, asc, size);
 
