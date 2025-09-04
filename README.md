@@ -29,7 +29,6 @@ JWT 인증·인가, STOMP/WebSocket 채팅서비스를 제공합니다
   - Spring WebSocket (STOMP/SockJS)
   - Spring Data JPA
   - Caffeine
-  - JJWT (JWT 처리)
 - **DB**: PostgreSQL (운영), H2 (개발)
 - **빌드**: Gradle
 - **테스트**: JUnit 5, Mockito
