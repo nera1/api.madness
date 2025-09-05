@@ -39,24 +39,24 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
             @Param("asc") boolean asc,
             @Param("size") int size);
 
-    // ASC, 첫 페이지 (cursor 없음)
+    // ASC, 첫 페이지
     @Query(value = """
             SELECT *
             FROM channels
             WHERE replace(lower(name), ' ', '')
-                  LIKE CONCAT('%', replace(lower(:kw), ' ', ''), '%')
+                  ILIKE CONCAT('%', replace(lower(:kw), ' ', ''), '%')
             ORDER BY public_id ASC
             LIMIT :size
             """, nativeQuery = true)
     List<Channel> searchAscFirst(@Param("kw") String kw, @Param("size") int size);
 
-    // ASC, cursor 이후
+    // ASC, cursor 이후 (text 비교!)
     @Query(value = """
             SELECT *
             FROM channels
             WHERE replace(lower(name), ' ', '')
-                  LIKE CONCAT('%', replace(lower(:kw), ' ', ''), '%')
-              AND public_id > CAST(:cursor AS uuid)
+                  ILIKE CONCAT('%', replace(lower(:kw), ' ', ''), '%')
+              AND public_id > :cursor
             ORDER BY public_id ASC
             LIMIT :size
             """, nativeQuery = true)
@@ -64,24 +64,24 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
             @Param("cursor") String cursor,
             @Param("size") int size);
 
-    // DESC, 첫 페이지 (cursor 없음)
+    // DESC, 첫 페이지
     @Query(value = """
             SELECT *
             FROM channels
             WHERE replace(lower(name), ' ', '')
-                  LIKE CONCAT('%', replace(lower(:kw), ' ', ''), '%')
+                  ILIKE CONCAT('%', replace(lower(:kw), ' ', ''), '%')
             ORDER BY public_id DESC
             LIMIT :size
             """, nativeQuery = true)
     List<Channel> searchDescFirst(@Param("kw") String kw, @Param("size") int size);
 
-    // DESC, cursor 이전
+    // DESC, cursor 이전 (text 비교!)
     @Query(value = """
             SELECT *
             FROM channels
             WHERE replace(lower(name), ' ', '')
-                  LIKE CONCAT('%', replace(lower(:kw), ' ', ''), '%')
-              AND public_id < CAST(:cursor AS uuid)
+                  ILIKE CONCAT('%', replace(lower(:kw), ' ', ''), '%')
+              AND public_id < :cursor
             ORDER BY public_id DESC
             LIMIT :size
             """, nativeQuery = true)
