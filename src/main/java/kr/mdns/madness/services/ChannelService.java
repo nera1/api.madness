@@ -112,17 +112,27 @@ public class ChannelService {
                 return deleted > 0;
         }
 
-        public List<ChannelDto> searchChannels(String keyword, String cursor, int size, boolean asc) {
-                List<Channel> channels = channelRepository.search(keyword, cursor, asc, size);
+        public List<Channel> searchNameOrderBy(String keyword, String cursor, boolean asc, int size) {
+                if (asc) {
+                        if (cursor == null) {
+                                return channelRepository.searchAscFirst(keyword, size);
+                        } else {
+                                return channelRepository.searchAscAfter(keyword, cursor, size);
+                        }
+                } else {
+                        if (cursor == null) {
+                                return channelRepository.searchDescFirst(keyword, size);
+                        } else {
+                                return channelRepository.searchDescBefore(keyword, cursor, size);
+                        }
+                }
+        }
 
+        public List<ChannelDto> searchChannels(String keyword, String cursor, int size, boolean asc) {
+                List<Channel> channels = searchNameOrderBy(keyword, cursor, asc, size);
                 return channels.stream()
-                                .map(c -> ChannelDto.builder()
-                                                .name(c.getName())
-                                                .publicId(c.getPublicId())
-                                                .createdAt(c.getCreatedAt())
-                                                .participants(channelConnectionCountService
-                                                                .getUserCount(c.getPublicId()))
-                                                .build())
+                                .map(c -> ChannelDto.from(c,
+                                                channelConnectionCountService.getUserCount(c.getPublicId())))
                                 .collect(Collectors.toList());
         }
 
