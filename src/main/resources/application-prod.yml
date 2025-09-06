@@ -35,3 +35,7 @@ app:
     secure: true
     sameSite: None
     domain: .madn.es
+
+search:
+  pgroonga:
+    enabled: true

@@ -89,6 +89,58 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
             @Param("cursor") String cursor,
             @Param("size") int size);
 
+    // === PGroonga 전용: ASC, 첫 페이지
+    @Query(value = """
+            SELECT *
+            FROM channels
+            WHERE replace(lower(name), ' ', '')
+                  &@ replace(lower(:kw), ' ', '')
+            ORDER BY public_id ASC
+            LIMIT :size
+            """, nativeQuery = true)
+    List<Channel> searchAscFirstPgroonga(@Param("kw") String kw,
+            @Param("size") int size);
+
+    // === PGroonga 전용: ASC, cursor 이후
+    @Query(value = """
+            SELECT *
+            FROM channels
+            WHERE replace(lower(name), ' ', '')
+                  &@ replace(lower(:kw), ' ', '')
+              AND public_id > :cursor
+            ORDER BY public_id ASC
+            LIMIT :size
+            """, nativeQuery = true)
+    List<Channel> searchAscAfterPgroonga(@Param("kw") String kw,
+            @Param("cursor") String cursor,
+            @Param("size") int size);
+
+    // === PGroonga 전용: DESC, 첫 페이지
+    @Query(value = """
+            SELECT *
+            FROM channels
+            WHERE replace(lower(name), ' ', '')
+                  &@ replace(lower(:kw), ' ', '')
+            ORDER BY public_id DESC
+            LIMIT :size
+            """, nativeQuery = true)
+    List<Channel> searchDescFirstPgroonga(@Param("kw") String kw,
+            @Param("size") int size);
+
+    // === PGroonga 전용: DESC, cursor 이전
+    @Query(value = """
+            SELECT *
+            FROM channels
+            WHERE replace(lower(name), ' ', '')
+                  &@ replace(lower(:kw), ' ', '')
+              AND public_id < :cursor
+            ORDER BY public_id DESC
+            LIMIT :size
+            """, nativeQuery = true)
+    List<Channel> searchDescBeforePgroonga(@Param("kw") String kw,
+            @Param("cursor") String cursor,
+            @Param("size") int size);
+
     List<Channel> findAllByPublicIdIn(Collection<String> publicIds);
 
     @Modifying

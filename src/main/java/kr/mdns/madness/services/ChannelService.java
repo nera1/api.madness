@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,9 @@ public class ChannelService {
         private final ChannelMemberService channelMemberService;
         private final ChannelConnectionCountService channelConnectionCountService;
         private final UuidGenerator uuidGenerator;
+
+        @Value("${search.pgroonga.enabled:false}")
+        private boolean pgroongaEnabled;
 
         @Transactional
         public ChannelResponseDto createChannel(ChannelRequestDto req, Long userId) {
@@ -128,8 +132,34 @@ public class ChannelService {
                 }
         }
 
+        public List<Channel> searchShortNameOrderBy(String keyword, String cursor, boolean asc, int size) {
+                if (asc) {
+                        if (cursor == null) {
+                                return channelRepository.searchAscFirstPgroonga(keyword, size);
+                        } else {
+                                return channelRepository.searchAscAfterPgroonga(keyword, cursor, size);
+                        }
+                } else {
+                        if (cursor == null) {
+                                return channelRepository.searchDescFirstPgroonga(keyword, size);
+                        } else {
+                                return channelRepository.searchDescBeforePgroonga(keyword, cursor, size);
+                        }
+                }
+        }
+
         public List<ChannelDto> searchChannels(String keyword, String cursor, int size, boolean asc) {
-                List<Channel> channels = searchNameOrderBy(keyword, cursor, asc, size);
+                List<Channel> channels = null;
+                if (keyword.length() < 3) {
+                        if (!pgroongaEnabled) {
+                                channels = searchNameOrderBy(keyword, cursor, asc, size);
+                        } else {
+                                channels = searchShortNameOrderBy(keyword, cursor, asc, size);
+                        }
+
+                } else {
+                        channels = searchNameOrderBy(keyword, cursor, asc, size);
+                }
                 return channels.stream()
                                 .map(c -> ChannelDto.from(c,
                                                 channelConnectionCountService.getUserCount(c.getPublicId())))
