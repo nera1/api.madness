@@ -24,7 +24,3 @@ app:
     secure: false
     sameSite: Lax
     domain: ""
-
-search:
-  pgroonga:
-    enabled: false

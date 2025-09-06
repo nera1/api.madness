@@ -38,9 +38,6 @@ public class ChannelService {
         private final ChannelConnectionCountService channelConnectionCountService;
         private final UuidGenerator uuidGenerator;
 
-        @Value("${search.pgroonga.enabled:false}")
-        private boolean pgroongaEnabled;
-
         @Transactional
         public ChannelResponseDto createChannel(ChannelRequestDto req, Long userId) {
                 Member creator = memberRepository.findById(userId)
@@ -149,17 +146,7 @@ public class ChannelService {
         }
 
         public List<ChannelDto> searchChannels(String keyword, String cursor, int size, boolean asc) {
-                List<Channel> channels = null;
-                if (keyword.length() < 3) {
-                        if (!pgroongaEnabled) {
-                                channels = searchNameOrderBy(keyword, cursor, asc, size);
-                        } else {
-                                channels = searchShortNameOrderBy(keyword, cursor, asc, size);
-                        }
-
-                } else {
-                        channels = searchNameOrderBy(keyword, cursor, asc, size);
-                }
+                List<Channel> channels = searchNameOrderBy(keyword, cursor, asc, size);
                 return channels.stream()
                                 .map(c -> ChannelDto.from(c,
                                                 channelConnectionCountService.getUserCount(c.getPublicId())))
