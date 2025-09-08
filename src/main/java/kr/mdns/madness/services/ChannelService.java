@@ -128,6 +128,22 @@ public class ChannelService {
                 }
         }
 
+        public List<Channel> searchShortNameOrderBy(String keyword, String cursor, boolean asc, int size) {
+                if (asc) {
+                        if (cursor == null) {
+                                return channelRepository.searchAscFirstPgroonga(keyword, size);
+                        } else {
+                                return channelRepository.searchAscAfterPgroonga(keyword, cursor, size);
+                        }
+                } else {
+                        if (cursor == null) {
+                                return channelRepository.searchDescFirstPgroonga(keyword, size);
+                        } else {
+                                return channelRepository.searchDescBeforePgroonga(keyword, cursor, size);
+                        }
+                }
+        }
+
         public List<ChannelDto> searchChannels(String keyword, String cursor, int size, boolean asc) {
                 List<Channel> channels = searchNameOrderBy(keyword, cursor, asc, size);
                 return channels.stream()
