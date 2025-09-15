@@ -1,5 +1,8 @@
 package kr.mdns.madness.config;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -16,6 +19,8 @@ import kr.mdns.madness.interceptor.ChannelConnectionCountInterceptor;
 import kr.mdns.madness.interceptor.JwtAuthInterceptor;
 import kr.mdns.madness.interceptor.JwtHandShakeInterceptor;
 import kr.mdns.madness.interceptor.StompAuthInterceptor;
+import kr.mdns.madness.record.SubscriptionKey;
+import kr.mdns.madness.services.ChannelConnectionCountService;
 import lombok.RequiredArgsConstructor;
 
 @Profile("h2")
@@ -24,6 +29,9 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSocketMessageBroker
 public class WebSocketConfigDev implements WebSocketMessageBrokerConfigurer {
 
+    private static final String ATTR_SUBS = "WS_SUBS";
+
+    private final ChannelConnectionCountService channelConnectionCountService;
     private final ChannelConnectionCountInterceptor channelConnectionCountInterceptor;
     private final JwtAuthInterceptor jwtAuthInterceptor;
     private final JwtHandShakeInterceptor jwtHandShakeInterceptor;
@@ -60,7 +68,12 @@ public class WebSocketConfigDev implements WebSocketMessageBrokerConfigurer {
             @Override
             public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
                 try {
-                    System.out.println("HERE");
+                    Set<SubscriptionKey> subs = (Set<SubscriptionKey>) session.getAttributes().computeIfAbsent(
+                            ATTR_SUBS,
+                            key -> ConcurrentHashMap.newKeySet());
+                    for (SubscriptionKey key : subs) {
+                        channelConnectionCountService.removeSubscription(key);
+                    }
                 } finally {
                     super.afterConnectionClosed(session, status);
                 }
