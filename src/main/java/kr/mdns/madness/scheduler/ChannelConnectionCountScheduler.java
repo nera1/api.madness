@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 public class ChannelConnectionCountScheduler {
     private final ChannelConnectionCountService channelConnectionCountService;
 
-    @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 */15 * * * *", zone = "Asia/Seoul")
     public void sumChannelConnectionCountByCache() {
 
     }
