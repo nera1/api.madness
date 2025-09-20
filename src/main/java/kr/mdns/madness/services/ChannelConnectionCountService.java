@@ -75,4 +75,13 @@ public class ChannelConnectionCountService {
                                 .map(SubscriptionKey::userId)
                                 .collect(Collectors.toSet());
         }
+
+        public Map<String, Integer> snapshotCounts() {
+                Map<String, Set<Long>> grouped = subscriptionCache.asMap().keySet().stream()
+                                .collect(Collectors.groupingBy(
+                                                SubscriptionKey::publicId,
+                                                Collectors.mapping(SubscriptionKey::userId, Collectors.toSet())));
+                return grouped.entrySet().stream()
+                                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().size()));
+        }
 }
