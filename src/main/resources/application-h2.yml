@@ -24,3 +24,10 @@ app:
     secure: false
     sameSite: Lax
     domain: ""
+
+live-rollup:
+  batch-size: 300
+  sql:
+    upsert: >
+      MERGE INTO channel_live_rollup (public_id, live_count, observed_at)
+      KEY(public_id) VALUES (:publicId, :liveCount, :observedAt)

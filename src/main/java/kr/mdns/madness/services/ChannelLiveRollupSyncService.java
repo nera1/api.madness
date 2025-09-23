@@ -10,34 +10,26 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.mdns.madness.config.LiveRollupConfig;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class ChannelLiveRollupSyncService {
 
-    private static final int BATCH_SIZE = 500;
-
     private final ChannelConnectionCountService channelConnectionCountService;
     private final NamedParameterJdbcTemplate jdbc;
-
-    private static final String UPSERT_SQL = """
-            INSERT INTO channel_live_rollup (public_id, live_count, observed_at)
-            VALUES (:publicId, :liveCount, :observedAt)
-            ON CONFLICT (public_id) DO UPDATE
-            SET live_count = EXCLUDED.live_count,
-                observed_at = EXCLUDED.observed_at
-            """;
-
-    private static final String DELETE_STALE_SQL = """
-            DELETE FROM channel_live_rollup
-            WHERE observed_at < :observedAt
-            """;
+    private final LiveRollupConfig liveRollupConfig;
 
     @Transactional
     public void replaceAllSnapshot() {
         Map<String, Integer> snapshot = channelConnectionCountService.snapshotCounts();
         OffsetDateTime now = OffsetDateTime.now();
+
+        LiveRollupConfig.Sql sql = liveRollupConfig.getSql();
+        if (sql == null || sql.getUpsert() == null || sql.getUpsert().isBlank()) {
+            throw new IllegalStateException("live-rollup.sql.upsert가 설정되지 않았습니다. 프로필별 yml을 확인하세요.");
+        }
 
         if (!snapshot.isEmpty()) {
             List<MapSqlParameterSource> params = new ArrayList<>(snapshot.size());
@@ -46,12 +38,16 @@ public class ChannelLiveRollupSyncService {
                             .addValue("publicId", publicId)
                             .addValue("liveCount", liveCount)
                             .addValue("observedAt", now)));
-            for (int i = 0; i < params.size(); i += BATCH_SIZE) {
-                int end = Math.min(i + BATCH_SIZE, params.size());
-                jdbc.batchUpdate(UPSERT_SQL, params.subList(i, end).toArray(MapSqlParameterSource[]::new));
+
+            int batchSize = liveRollupConfig.getBatchSize();
+            for (int i = 0; i < params.size(); i += batchSize) {
+                int end = Math.min(i + batchSize, params.size());
+                jdbc.batchUpdate(sql.getUpsert(),
+                        params.subList(i, end).toArray(MapSqlParameterSource[]::new));
             }
         }
 
-        jdbc.update(DELETE_STALE_SQL, new MapSqlParameterSource("observedAt", now));
+        jdbc.update(sql.getDeleteStale(),
+                new MapSqlParameterSource("observedAt", now));
     }
 }

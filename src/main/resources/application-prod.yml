@@ -35,3 +35,13 @@ app:
     secure: true
     sameSite: None
     domain: .madn.es
+
+live-rollup:
+  batch-size: 1000
+  sql:
+    upsert: >
+      INSERT INTO channel_live_rollup (public_id, live_count, observed_at)
+      VALUES (:publicId, :liveCount, :observedAt)
+      ON CONFLICT (public_id) DO UPDATE
+        SET live_count = EXCLUDED.live_count,
+            observed_at = EXCLUDED.observed_at
