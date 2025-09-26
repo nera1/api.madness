@@ -26,8 +26,11 @@ app:
     domain: ""
 
 live-rollup:
-  batch-size: 300
+  batch-size: 1000
   sql:
     upsert: >
       MERGE INTO channel_live_rollup (public_id, live_count, observed_at)
-      KEY(public_id) VALUES (:publicId, :liveCount, :observedAt)
+      KEY(public_id, observed_at)
+      VALUES (:publicId, :liveCount, :observedAt)
+    delete-stale: >
+      DELETE FROM channel_live_rollup WHERE observed_at < :observedAt

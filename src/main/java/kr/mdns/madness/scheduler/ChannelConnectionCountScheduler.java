@@ -1,5 +1,7 @@
 package kr.mdns.madness.scheduler;
 
+import java.time.Duration;
+
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -14,5 +16,10 @@ public class ChannelConnectionCountScheduler {
     @Scheduled(cron = "0 */5 * * * *", zone = "Asia/Seoul")
     public void sumChannelConnectionCountByCache() {
         channelLiveRollupSyncService.replaceAllSnapshot();
+    }
+
+    @Scheduled(cron = "0 */30 * * * *", zone = "Asia/Seoul")
+    public void purgeOldSnapshots() {
+        channelLiveRollupSyncService.deleteStaleOlderThanLatestMinus(Duration.ofMinutes(30));
     }
 }

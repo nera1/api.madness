@@ -1,6 +1,7 @@
 package kr.mdns.madness.services;
 
 import java.time.OffsetDateTime;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,9 +27,9 @@ public class ChannelLiveRollupSyncService {
         Map<String, Integer> snapshot = channelConnectionCountService.snapshotCounts();
         OffsetDateTime now = OffsetDateTime.now();
 
-        LiveRollupConfig.Sql sql = liveRollupConfig.getSql();
+        var sql = liveRollupConfig.getSql();
         if (sql == null || sql.getUpsert() == null || sql.getUpsert().isBlank()) {
-            throw new IllegalStateException("live-rollup.sql.upsert가 설정되지 않았습니다. 프로필별 yml을 확인하세요.");
+            throw new IllegalStateException("live-rollup.sql.upsert가 설정되지 않았습니다.");
         }
 
         if (!snapshot.isEmpty()) {
@@ -38,7 +39,6 @@ public class ChannelLiveRollupSyncService {
                             .addValue("publicId", publicId)
                             .addValue("liveCount", liveCount)
                             .addValue("observedAt", now)));
-
             int batchSize = liveRollupConfig.getBatchSize();
             for (int i = 0; i < params.size(); i += batchSize) {
                 int end = Math.min(i + batchSize, params.size());
@@ -46,8 +46,19 @@ public class ChannelLiveRollupSyncService {
                         params.subList(i, end).toArray(MapSqlParameterSource[]::new));
             }
         }
+    }
 
-        jdbc.update(sql.getDeleteStale(),
-                new MapSqlParameterSource("observedAt", now));
+    @Transactional
+    public int deleteStaleOlderThanLatestMinus(Duration ttl) {
+        OffsetDateTime latest = jdbc.queryForObject(
+                "SELECT MAX(observed_at) FROM channel_live_rollup",
+                new MapSqlParameterSource(),
+                OffsetDateTime.class);
+        if (latest == null)
+            return 0;
+        OffsetDateTime cutoff = latest.minus(ttl);
+        return jdbc.update(
+                liveRollupConfig.getSql().getDeleteStale(),
+                new MapSqlParameterSource("observedAt", cutoff));
     }
 }
