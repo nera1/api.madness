@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.mdns.madness.domain.Channel;
+import kr.mdns.madness.projection.ChannelAndCount;
 
 public interface ChannelRepository extends JpaRepository<Channel, Long> {
 

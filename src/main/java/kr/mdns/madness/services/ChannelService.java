@@ -112,7 +112,7 @@ public class ChannelService {
                 return deleted > 0;
         }
 
-        public List<Channel> searchNameOrderBy(String keyword, String cursor, boolean asc, int size) {
+        public List<Channel> searchNameOrderBy(String keyword, String cursor, boolean asc, int size, Integer count) {
                 if (asc) {
                         if (cursor == null) {
                                 return channelRepository.searchAscFirst(keyword, size);
@@ -128,7 +128,8 @@ public class ChannelService {
                 }
         }
 
-        public List<Channel> searchShortNameOrderBy(String keyword, String cursor, boolean asc, int size) {
+        public List<Channel> searchShortNameOrderBy(String keyword, String cursor, boolean asc, int size,
+                        Integer count) {
                 if (asc) {
                         if (cursor == null) {
                                 return channelRepository.searchAscFirstPgroonga(keyword, size);
@@ -144,8 +145,8 @@ public class ChannelService {
                 }
         }
 
-        public List<ChannelDto> searchChannels(String keyword, String cursor, int size, boolean asc) {
-                List<Channel> channels = searchNameOrderBy(keyword, cursor, asc, size);
+        public List<ChannelDto> searchChannels(String keyword, String cursor, int size, boolean asc, Integer count) {
+                List<Channel> channels = searchNameOrderBy(keyword, cursor, asc, size, count);
                 return channels.stream()
                                 .map(c -> ChannelDto.from(c,
                                                 channelConnectionCountService.getUserCount(c.getPublicId())))

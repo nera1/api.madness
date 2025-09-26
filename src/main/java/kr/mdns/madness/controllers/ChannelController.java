@@ -85,9 +85,10 @@ public class ChannelController {
                         @RequestParam String keyword,
                         @RequestParam(required = false) String cursor,
                         @RequestParam(defaultValue = "10") int size,
-                        @RequestParam(defaultValue = "desc") String order) {
+                        @RequestParam(defaultValue = "desc") String order,
+                        @RequestParam(required = false) Integer count) {
                 boolean asc = order.equalsIgnoreCase("asc");
-                List<ChannelDto> list = channelService.searchChannels(keyword, cursor, size, asc);
+                List<ChannelDto> list = channelService.searchChannels(keyword, cursor, size, asc, count);
                 return ResponseEntity.ok()
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(ApiResponse.of(0, "", list));
