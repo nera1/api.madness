@@ -1,5 +1,6 @@
 package kr.mdns.madness.services;
 
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import kr.mdns.madness.domain.Member;
 import kr.mdns.madness.dto.ChannelDto;
 import kr.mdns.madness.dto.ChannelRequestDto;
 import kr.mdns.madness.dto.ChannelResponseDto;
+import kr.mdns.madness.projection.ChannelAndCount;
 import kr.mdns.madness.repository.ChannelMemberRepository;
 import kr.mdns.madness.repository.ChannelRepository;
 import kr.mdns.madness.repository.MemberRepository;
@@ -143,6 +145,33 @@ public class ChannelService {
                                 return channelRepository.searchDescBeforePgroonga(keyword, cursor, size);
                         }
                 }
+        }
+
+        @Transactional(readOnly = true)
+        public List<ChannelAndCount> searchByLiveCount(String keyword,
+                        OffsetDateTime snapAt,
+                        Integer cursorLiveCount,
+                        String cursorPublicId,
+                        int size,
+                        boolean asc) {
+                boolean hasCursor = cursorLiveCount != null && cursorPublicId != null;
+
+                if (!hasCursor) {
+                        return asc
+                                        ? channelRepository.searchByLiveAscFirst(keyword, size)
+                                        : channelRepository.searchByLiveDescFirst(keyword, size);
+                }
+
+                if (snapAt == null) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                        "snapAt is required when cursor is present");
+                }
+
+                return asc
+                                ? channelRepository.searchByLiveAscAfter(keyword, snapAt, cursorLiveCount,
+                                                cursorPublicId, size)
+                                : channelRepository.searchByLiveDescAfter(keyword, snapAt, cursorLiveCount,
+                                                cursorPublicId, size);
         }
 
         public List<ChannelDto> searchChannels(String keyword, String cursor, int size, boolean asc, Integer count) {

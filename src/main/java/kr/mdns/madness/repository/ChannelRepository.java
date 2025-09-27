@@ -141,6 +141,120 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
                   @Param("cursor") String cursor,
                   @Param("size") int size);
 
+      @Query(value = """
+                  WITH matched_channels AS (
+                    SELECT public_id, name, member_count
+                    FROM channels
+                    WHERE REPLACE(LOWER(name), ' ', '')
+                          ILIKE CONCAT('%', REPLACE(LOWER(:keyword), ' ', ''), '%')
+                  ),
+                  latest AS (
+                    SELECT MAX(observed_at) AS snap_at FROM channel_live_rollup
+                  )
+                  SELECT
+                    m.public_id AS publicId,
+                    m.name AS name,
+                    m.member_count AS memberCount,
+                    COALESCE(r.live_count, 0) AS liveCount,
+                    l.snap_at AS observedAt
+                  FROM matched_channels m
+                  JOIN latest l ON l.snap_at IS NOT NULL
+                  LEFT JOIN channel_live_rollup r
+                    ON r.public_id = m.public_id
+                   AND r.observed_at = l.snap_at
+                  ORDER BY COALESCE(r.live_count,0) DESC, m.public_id ASC
+                  LIMIT :size
+                  """, nativeQuery = true)
+      List<ChannelAndCount> searchByLiveDescFirst(
+                  @Param("keyword") String keyword,
+                  @Param("size") int size);
+
+      @Query(value = """
+                  WITH matched_channels AS (
+                    SELECT public_id, name, member_count
+                    FROM channels
+                    WHERE REPLACE(LOWER(name), ' ', '')
+                          ILIKE CONCAT('%', REPLACE(LOWER(:keyword), ' ', ''), '%')
+                  )
+                  SELECT
+                    m.public_id AS publicId,
+                    m.name AS name,
+                    m.member_count AS memberCount,
+                    COALESCE(r.live_count, 0) AS liveCount,
+                    :snapAt AS observedAt
+                  FROM matched_channels m
+                  LEFT JOIN channel_live_rollup r
+                    ON r.public_id = m.public_id
+                   AND r.observed_at = :snapAt
+                  WHERE COALESCE(r.live_count,0) < :lastLiveCount
+                     OR (COALESCE(r.live_count,0) = :lastLiveCount AND m.public_id > :lastPublicId)
+                  ORDER BY COALESCE(r.live_count,0) DESC, m.public_id ASC
+                  LIMIT :size
+                  """, nativeQuery = true)
+      List<ChannelAndCount> searchByLiveDescAfter(
+                  @Param("keyword") String keyword,
+                  @Param("snapAt") java.time.OffsetDateTime snapAt,
+                  @Param("lastLiveCount") Integer lastLiveCount,
+                  @Param("lastPublicId") String lastPublicId,
+                  @Param("size") int size);
+
+      @Query(value = """
+                  WITH matched_channels AS (
+                    SELECT public_id, name, member_count
+                    FROM channels
+                    WHERE REPLACE(LOWER(name), ' ', '')
+                          ILIKE CONCAT('%', REPLACE(LOWER(:keyword), ' ', ''), '%')
+                  ),
+                  latest AS (
+                    SELECT MAX(observed_at) AS snap_at FROM channel_live_rollup
+                  )
+                  SELECT
+                    m.public_id AS publicId,
+                    m.name AS name,
+                    m.member_count AS memberCount,
+                    COALESCE(r.live_count, 0) AS liveCount,
+                    l.snap_at AS observedAt
+                  FROM matched_channels m
+                  JOIN latest l ON l.snap_at IS NOT NULL
+                  LEFT JOIN channel_live_rollup r
+                    ON r.public_id = m.public_id
+                   AND r.observed_at = l.snap_at
+                  ORDER BY COALESCE(r.live_count,0) ASC, m.public_id ASC
+                  LIMIT :size
+                  """, nativeQuery = true)
+      List<ChannelAndCount> searchByLiveAscFirst(
+                  @Param("keyword") String keyword,
+                  @Param("size") int size);
+
+      @Query(value = """
+                  WITH matched_channels AS (
+                    SELECT public_id, name, member_count
+                    FROM channels
+                    WHERE REPLACE(LOWER(name), ' ', '')
+                          ILIKE CONCAT('%', REPLACE(LOWER(:keyword), ' ', ''), '%')
+                  )
+                  SELECT
+                    m.public_id AS publicId,
+                    m.name AS name,
+                    m.member_count AS memberCount,
+                    COALESCE(r.live_count, 0) AS liveCount,
+                    :snapAt AS observedAt
+                  FROM matched_channels m
+                  LEFT JOIN channel_live_rollup r
+                    ON r.public_id = m.public_id
+                   AND r.observed_at = :snapAt
+                  WHERE COALESCE(r.live_count,0) > :lastLiveCount
+                     OR (COALESCE(r.live_count,0) = :lastLiveCount AND m.public_id > :lastPublicId)
+                  ORDER BY COALESCE(r.live_count,0) ASC, m.public_id ASC
+                  LIMIT :size
+                  """, nativeQuery = true)
+      List<ChannelAndCount> searchByLiveAscAfter(
+                  @Param("keyword") String keyword,
+                  @Param("snapAt") java.time.OffsetDateTime snapAt,
+                  @Param("lastLiveCount") Integer lastLiveCount,
+                  @Param("lastPublicId") String lastPublicId,
+                  @Param("size") int size);
+
       // 공통 유틸
       List<Channel> findAllByPublicIdIn(Collection<String> publicIds);
 
