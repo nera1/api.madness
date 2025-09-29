@@ -1,6 +1,7 @@
 package kr.mdns.madness.services;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -130,23 +131,6 @@ public class ChannelService {
                 }
         }
 
-        public List<Channel> searchShortNameOrderBy(String keyword, String cursor, boolean asc, int size,
-                        Integer count) {
-                if (asc) {
-                        if (cursor == null) {
-                                return channelRepository.searchAscFirstPgroonga(keyword, size);
-                        } else {
-                                return channelRepository.searchAscAfterPgroonga(keyword, cursor, size);
-                        }
-                } else {
-                        if (cursor == null) {
-                                return channelRepository.searchDescFirstPgroonga(keyword, size);
-                        } else {
-                                return channelRepository.searchDescBeforePgroonga(keyword, cursor, size);
-                        }
-                }
-        }
-
         @Transactional(readOnly = true)
         public List<ChannelAndCount> searchByLiveCount(String keyword,
                         OffsetDateTime snapAt,
@@ -174,8 +158,19 @@ public class ChannelService {
                                                 cursorPublicId, size);
         }
 
-        public List<ChannelDto> searchChannels(String keyword, String cursor, int size, boolean asc, Integer count) {
-                List<Channel> channels = searchNameOrderBy(keyword, cursor, asc, size, count);
+        public List<ChannelDto> searchChannels(String keyword, String cursor, int size, boolean asc, Integer count,
+                        OffsetDateTime snapAt) {
+
+                List<Channel> channels = new ArrayList<>();
+
+                if (snapAt == null) {
+                        System.out.println("HERE = " + snapAt + "COUNT = " + count);
+                        channels = searchNameOrderBy(keyword, cursor, asc, size, count);
+                } else {
+                        System.out.println("HERE = " + snapAt + "COUNT = " + count);
+                        channels = searchNameOrderBy(keyword, cursor, asc, size, count);
+                }
+
                 return channels.stream()
                                 .map(c -> ChannelDto.from(c,
                                                 channelConnectionCountService.getUserCount(c.getPublicId())))

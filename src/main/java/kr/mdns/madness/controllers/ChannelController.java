@@ -1,5 +1,6 @@
 package kr.mdns.madness.controllers;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -86,12 +87,15 @@ public class ChannelController {
                         @RequestParam(required = false) String cursor,
                         @RequestParam(defaultValue = "10") int size,
                         @RequestParam(defaultValue = "desc") String order,
+                        @RequestParam(required = false) OffsetDateTime snapAt,
                         @RequestParam(required = false) Integer count) {
+
                 boolean asc = order.equalsIgnoreCase("asc");
-                List<ChannelDto> list = channelService.searchChannels(keyword, cursor, size, asc, count);
+                List<ChannelDto> list = channelService.searchChannels(keyword, cursor, size, asc, count, snapAt);
                 return ResponseEntity.ok()
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(ApiResponse.of(0, "", list));
+
         }
 
         @GetMapping("/{publicId}/members")
