@@ -162,14 +162,17 @@ public class ChannelService {
                         OffsetDateTime snapAt) {
 
                 List<Channel> channels = new ArrayList<>();
-
+                System.out.println("===================");
                 if (snapAt == null) {
-                        System.out.println("HERE = " + snapAt + "COUNT = " + count);
-                        channels = searchNameOrderBy(keyword, cursor, asc, size, count);
+                        System.out.println("No snap, HERE = " + snapAt + "COUNT = " + count);
+                        // channels = searchNameOrderBy(keyword, cursor, asc, size, count);
                 } else {
-                        System.out.println("HERE = " + snapAt + "COUNT = " + count);
-                        channels = searchNameOrderBy(keyword, cursor, asc, size, count);
+                        System.out.println("Snap, HERE = " + snapAt + "COUNT = " + count);
+                        // channels = searchNameOrderBy(keyword, cursor, asc, size, count);
                 }
+                System.out.println("===================");
+
+                channels = searchNameOrderBy(keyword, cursor, asc, size, count);
 
                 return channels.stream()
                                 .map(c -> ChannelDto.from(c,
