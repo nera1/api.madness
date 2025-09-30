@@ -159,18 +159,20 @@ public class ChannelService {
         }
 
         public List<ChannelDto> searchChannels(String keyword, String cursor, int size, boolean asc, Integer count,
-                        OffsetDateTime snapAt) {
+                        OffsetDateTime snapAt, String order) {
 
                 List<Channel> channels = new ArrayList<>();
-                System.out.println("===================");
-                if (snapAt == null) {
-                        System.out.println("No snap, HERE = " + snapAt + "COUNT = " + count);
+
+                if (order.equals("participants")) {
+                        System.out.println("participants, HERE = " + snapAt + "COUNT = " + count);
                         // channels = searchNameOrderBy(keyword, cursor, asc, size, count);
-                } else {
-                        System.out.println("Snap, HERE = " + snapAt + "COUNT = " + count);
-                        // channels = searchNameOrderBy(keyword, cursor, asc, size, count);
+                        List<ChannelAndCount> list = searchByLiveCount(keyword, snapAt, count, cursor, size, asc);
+                        return list.stream()
+                                        .map(c -> ChannelDto.from(c,
+                                                        channelConnectionCountService.getUserCount(c.getPublicId())))
+                                        .collect(Collectors.toList());
+
                 }
-                System.out.println("===================");
 
                 channels = searchNameOrderBy(keyword, cursor, asc, size, count);
 

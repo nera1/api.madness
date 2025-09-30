@@ -1,23 +1,32 @@
 spring:
   datasource:
-    url: jdbc:h2:~/h2db/madness;DB_CLOSE_DELAY=-1;AUTO_SERVER=TRUE
+    url: jdbc:h2:~/h2db/madness;DB_CLOSE_DELAY=-1;LOCK_TIMEOUT=10000
     driver-class-name: org.h2.Driver
     username: sa
     password:
+    hikari:
+      maximum-pool-size: 1
+      minimum-idle: 1
 
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
-jwt:
-  secret: sr4pAFdtvtGl2DG3CfKnikpSRaXPf0S7aKkLUsbkJic=
-  access-exp-ms: 900000
-  refresh-exp-sec: 1209600
+
+  task:
+    scheduling:
+      pool:
+        size: 1
 
   h2:
     console:
       enabled: true
       path: /h2-console
+
+jwt:
+  secret: sr4pAFdtvtGl2DG3CfKnikpSRaXPf0S7aKkLUsbkJic=
+  access-exp-ms: 900000
+  refresh-exp-sec: 1209600
 
 app:
   cookie:
@@ -26,7 +35,7 @@ app:
     domain: ""
 
 live-rollup:
-  batch-size: 1000
+  batch-size: 1
   sql:
     upsert: >
       MERGE INTO channel_live_rollup (public_id, live_count, observed_at)

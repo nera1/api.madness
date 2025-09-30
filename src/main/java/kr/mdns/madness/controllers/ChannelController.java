@@ -91,7 +91,7 @@ public class ChannelController {
                         @RequestParam(required = false) Integer count) {
 
                 boolean asc = order.equalsIgnoreCase("asc");
-                List<ChannelDto> list = channelService.searchChannels(keyword, cursor, size, asc, count, snapAt);
+                List<ChannelDto> list = channelService.searchChannels(keyword, cursor, size, asc, count, snapAt, order);
                 return ResponseEntity.ok()
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(ApiResponse.of(0, "", list));

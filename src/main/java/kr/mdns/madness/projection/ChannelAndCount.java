@@ -1,5 +1,8 @@
 package kr.mdns.madness.projection;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+
 public interface ChannelAndCount {
     String getPublicId();
 
@@ -9,5 +12,7 @@ public interface ChannelAndCount {
 
     Integer getLiveCount();
 
-    java.time.OffsetDateTime getObservedAt();
+    OffsetDateTime getSnapAt();
+
+    LocalDateTime getCreatedAt();
 }

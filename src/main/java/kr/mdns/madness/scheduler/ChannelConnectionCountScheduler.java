@@ -13,12 +13,12 @@ import lombok.RequiredArgsConstructor;
 public class ChannelConnectionCountScheduler {
     private final ChannelLiveRollupSyncService channelLiveRollupSyncService;
 
-    @Scheduled(cron = "0 */5 * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "10 */5 * * * *", zone = "Asia/Seoul")
     public void sumChannelConnectionCountByCache() {
         channelLiveRollupSyncService.replaceAllSnapshot();
     }
 
-    @Scheduled(cron = "0 */30 * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "20 2/30 * * * *", zone = "Asia/Seoul")
     public void purgeOldSnapshots() {
         channelLiveRollupSyncService.deleteStaleOlderThanLatestMinus(Duration.ofMinutes(30));
     }
