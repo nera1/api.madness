@@ -7,9 +7,11 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.util.ObjectUtils;
 
 @Configuration(proxyBeanMethods = false)
+@Profile("h2")
 public class H2DependsOnConfig {
 
     @Bean
