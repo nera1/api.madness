@@ -11,13 +11,21 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LiveRollupConfig {
+
     private int batchSize = 500;
-    private Sql sql;
+
+    private Sql sql = new Sql();
 
     @Getter
     @Setter
     public static class Sql {
+
         private String upsert;
+
+        private String upsertUpdate;
+        private String upsertInsert;
+
         private String deleteStale = "DELETE FROM channel_live_rollup WHERE observed_at < :observedAt";
+
     }
 }

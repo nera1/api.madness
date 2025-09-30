@@ -7,7 +7,7 @@ import lombok.*;
 @Entity
 @Table(name = "channel_live_rollup", indexes = {
         @Index(name = "idx_rollup_public_id", columnList = "public_id"),
-        @Index(name = "idx_rollup_observed_at", columnList = "observed_at")
+        @Index(name = "idx_rollup_snap_at", columnList = "snap_at") // ← 이름 변경
 })
 @Getter
 @Setter
@@ -27,6 +27,7 @@ public class ChannelLiveRollup {
     @Column(name = "live_count", nullable = false)
     private Integer liveCount;
 
-    @Column(name = "observed_at", nullable = false, insertable = false, updatable = false)
-    private OffsetDateTime observedAt;
+    /** 관측 스냅샷 시각 */
+    @Column(name = "snap_at", nullable = false, insertable = false, updatable = false)
+    private OffsetDateTime snapAt;
 }

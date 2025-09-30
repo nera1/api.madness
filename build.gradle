@@ -51,7 +51,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     //h2
-    runtimeOnly 'com.h2database:h2'
+    implementation 'com.h2database:h2'
     testImplementation 'com.h2database:h2'
 
     implementation 'org.springframework.boot:spring-boot-starter-security'
