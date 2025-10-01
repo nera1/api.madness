@@ -151,11 +151,14 @@ public class ChannelService {
                                         "snapAt is required when cursor is present");
                 }
 
-                return asc
-                                ? channelRepository.searchByLiveAscAfter(keyword, snapAt, cursorLiveCount,
-                                                cursorPublicId, size)
-                                : channelRepository.searchByLiveDescAfter(keyword, snapAt, cursorLiveCount,
-                                                cursorPublicId, size);
+                // return asc
+                // ? channelRepository.searchByLiveAscAfter(keyword, snapAt, cursorLiveCount,
+                // cursorPublicId, size)
+                // : channelRepository.searchByLiveDescAfter(keyword, snapAt, cursorLiveCount,
+                // cursorPublicId, size);
+                System.out.println(
+                                keyword + ", " + snapAt + ", " + cursorLiveCount + ", " + cursorPublicId + ", " + size);
+                return channelRepository.searchByLiveDescAfter(keyword, snapAt, cursorLiveCount, cursorPublicId, size);
         }
 
         public List<ChannelDto> searchChannels(String keyword, String cursor, int size, boolean asc, Integer count,
@@ -164,8 +167,10 @@ public class ChannelService {
                 List<Channel> channels = new ArrayList<>();
 
                 if (order.equals("participants")) {
-                        System.out.println("participants, HERE = " + snapAt + "COUNT = " + count);
-                        // channels = searchNameOrderBy(keyword, cursor, asc, size, count);
+                        System.out.println(
+                                        "participants, HERE = " + snapAt + "COUNT = " + count + "KEYWORD = " + keyword
+                                                        + " SIZE = " + size);
+
                         List<ChannelAndCount> list = searchByLiveCount(keyword, snapAt, count, cursor, size, asc);
                         return list.stream()
                                         .map(c -> ChannelDto.from(c,
