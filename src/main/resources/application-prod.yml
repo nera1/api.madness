@@ -40,9 +40,9 @@ live-rollup:
   batch-size: 1000
   sql:
     upsert: >
-      INSERT INTO channel_live_rollup (public_id, live_count, observed_at)
-      VALUES (:publicId, :liveCount, :observedAt)
-      ON CONFLICT (public_id, observed_at) DO UPDATE
-        SET live_count = EXCLUDED.live_count
+      INSERT INTO channel_live_rollup (public_id, live_count, snap_at)
+      VALUES (:publicId, :liveCount, :snapAt)
+      ON CONFLICT (public_id, snap_at)
+      DO UPDATE SET live_count = EXCLUDED.live_count
     delete-stale: >
-      DELETE FROM channel_live_rollup WHERE observed_at < :observedAt
+      DELETE FROM channel_live_rollup WHERE snap_at < :snapAt

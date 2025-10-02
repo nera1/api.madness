@@ -156,7 +156,6 @@ public class ChannelService {
                                                 cursorPublicId, size)
                                 : channelRepository.searchByLiveDescAfter(keyword, snapAt, cursorLiveCount,
                                                 cursorPublicId, size);
-
         }
 
         public List<ChannelDto> searchChannels(String keyword, String cursor, int size, boolean asc, Integer count,
@@ -165,11 +164,8 @@ public class ChannelService {
                 List<Channel> channels = new ArrayList<>();
 
                 if (order.equals("participants")) {
-                        System.out.println(
-                                        "participants, snapAt = " + snapAt + "COUNT = " + count + " cursor = "
-                                                        + cursor);
+                        System.out.println("participants, HERE = " + snapAt + "COUNT = " + count);
                         // channels = searchNameOrderBy(keyword, cursor, asc, size, count);
-
                         List<ChannelAndCount> list = searchByLiveCount(keyword, snapAt, count, cursor, size, asc);
                         return list.stream()
                                         .map(c -> ChannelDto.from(c,
