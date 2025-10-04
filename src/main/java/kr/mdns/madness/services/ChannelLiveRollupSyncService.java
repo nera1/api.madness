@@ -2,6 +2,7 @@ package kr.mdns.madness.services;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class ChannelLiveRollupSyncService {
         if (snapshot.isEmpty())
             return;
 
-        OffsetDateTime snapAt = OffsetDateTime.now();
+        OffsetDateTime snapAt = OffsetDateTime.now().truncatedTo(ChronoUnit.MINUTES);
         LiveRollupConfig.Sql sqlProps = liveRollupConfig.getSql();
 
         List<MapSqlParameterSource> params = new ArrayList<>(snapshot.size());
@@ -37,8 +38,7 @@ public class ChannelLiveRollupSyncService {
                 new MapSqlParameterSource()
                         .addValue("publicId", publicId)
                         .addValue("liveCount", liveCount)
-                        .addValue("snapAt", snapAt) // ← 여기!
-        ));
+                        .addValue("snapAt", snapAt)));
 
         int batchSize = Math.max(1, liveRollupConfig.getBatchSize());
 
