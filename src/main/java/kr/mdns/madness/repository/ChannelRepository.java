@@ -152,21 +152,20 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
                           SELECT MAX(snap_at) AS snap_at FROM channel_live_rollup
                         )
                         SELECT
-                          m.public_id  AS publicId,
-                          m.name       AS name,
-                          m.member_count AS memberCount,
-                          m.created_at AS createdAt,
-                          COALESCE(r.live_count, 0) AS liveCount,
-                          COALESCE(l.snap_at, CAST(DATE_TRUNC('minute', CURRENT_TIMESTAMP) AS TIMESTAMP WITH TIME ZONE)) AS snapAt
+                          m.public_id    AS "publicId",
+                          m.name         AS "name",
+                          m.member_count AS "memberCount",
+                          m.created_at   AS "createdAt",
+                          COALESCE(r.live_count, 0) AS "liveCount",
+                          COALESCE(l.snap_at, DATE_TRUNC('minute', CURRENT_TIMESTAMP)) AS "snapAt"
                         FROM matched_channels m
                         LEFT JOIN latest l ON 1=1
                         LEFT JOIN channel_live_rollup r
                           ON r.public_id = m.public_id
                          AND (l.snap_at IS NULL OR r.snap_at = l.snap_at)
                         ORDER BY COALESCE(r.live_count, 0) DESC, m.public_id DESC
-                        LIMIT :size;
-
-                                                      """, nativeQuery = true)
+                        LIMIT :size
+                        """, nativeQuery = true)
         List<ChannelAndCount> searchByLiveDescFirst(
                         @Param("keyword") String keyword,
                         @Param("size") int size);
@@ -181,27 +180,24 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
                         effective AS (
                           SELECT COALESCE(
                                    CAST(:snapAt AS TIMESTAMP WITH TIME ZONE),
-                                   CAST(DATE_TRUNC('minute', CURRENT_TIMESTAMP) AS TIMESTAMP WITH TIME ZONE)
-                                 ) AS snapAt
+                                   DATE_TRUNC('minute', CURRENT_TIMESTAMP)
+                                 ) AS snap_at
                         )
                         SELECT
-                          m.public_id    AS publicId,
-                          m.name         AS name,
-                          m.member_count AS memberCount,
-                          m.created_at   AS createdAt,
-                          COALESCE(r.live_count, 0) AS liveCount,
-                          e.snap_at      AS snapAt
+                          m.public_id    AS "publicId",
+                          m.name         AS "name",
+                          m.member_count AS "memberCount",
+                          m.created_at   AS "createdAt",
+                          COALESCE(r.live_count, 0) AS "liveCount",
+                          e.snap_at      AS "snapAt"
                         FROM matched_channels m
                         CROSS JOIN effective e
                         LEFT JOIN channel_live_rollup r
                           ON r.public_id = m.public_id
                          AND r.snap_at   = e.snap_at
                         WHERE
-                            (COALESCE(r.live_count, 0) < :lastLiveCount)
-                         OR (
-                              COALESCE(r.live_count, 0) = :lastLiveCount
-                          AND m.public_id > :lastPublicId
-                            )
+                              COALESCE(r.live_count, 0) < :lastLiveCount
+                           OR (COALESCE(r.live_count, 0) = :lastLiveCount AND m.public_id < :lastPublicId)
                         ORDER BY COALESCE(r.live_count, 0) DESC, m.public_id DESC
                         LIMIT :size
                         """, nativeQuery = true)
@@ -223,18 +219,18 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
                           SELECT MAX(snap_at) AS snap_at FROM channel_live_rollup
                         )
                         SELECT
-                          m.public_id AS publicId,
-                          m.name AS name,
-                          m.member_count AS memberCount,
-                          m.created_at AS createdAt,
-                          COALESCE(r.live_count, 0) AS liveCount,
-                          l.snap_at AS snapAt
+                          m.public_id    AS "publicId",
+                          m.name         AS "name",
+                          m.member_count AS "memberCount",
+                          m.created_at   AS "createdAt",
+                          COALESCE(r.live_count, 0) AS "liveCount",
+                          l.snap_at      AS "snapAt"
                         FROM matched_channels m
                         JOIN latest l ON l.snap_at IS NOT NULL
                         LEFT JOIN channel_live_rollup r
                           ON r.public_id = m.public_id
                          AND r.snap_at   = l.snap_at
-                        ORDER BY COALESCE(r.live_count,0) ASC, m.public_id ASC
+                        ORDER BY COALESCE(r.live_count, 0) ASC, m.public_id ASC
                         LIMIT :size
                         """, nativeQuery = true)
         List<ChannelAndCount> searchByLiveAscFirst(
@@ -249,19 +245,19 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
                                 ILIKE CONCAT('%', REPLACE(LOWER(:keyword), ' ', ''), '%')
                         )
                         SELECT
-                          m.public_id AS publicId,
-                          m.name AS name,
-                          m.member_count AS memberCount,
-                          m.created_at AS createdAt,
-                          COALESCE(r.live_count, 0) AS liveCount,
-                          :snapAt AS snapAt
+                          m.public_id    AS "publicId",
+                          m.name         AS "name",
+                          m.member_count AS "memberCount",
+                          m.created_at   AS "createdAt",
+                          COALESCE(r.live_count, 0) AS "liveCount",
+                          :snapAt        AS "snapAt"
                         FROM matched_channels m
                         LEFT JOIN channel_live_rollup r
                           ON r.public_id = m.public_id
                          AND r.snap_at   = :snapAt
-                        WHERE COALESCE(r.live_count,0) > :lastLiveCount
-                           OR (COALESCE(r.live_count,0) = :lastLiveCount AND m.public_id > :lastPublicId)
-                        ORDER BY COALESCE(r.live_count,0) ASC, m.public_id ASC
+                        WHERE COALESCE(r.live_count, 0) > :lastLiveCount
+                           OR (COALESCE(r.live_count, 0) = :lastLiveCount AND m.public_id > :lastPublicId)
+                        ORDER BY COALESCE(r.live_count, 0) ASC, m.public_id ASC
                         LIMIT :size
                         """, nativeQuery = true)
         List<ChannelAndCount> searchByLiveAscAfter(
