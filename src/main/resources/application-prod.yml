@@ -1,4 +1,33 @@
+logging:
+  level:
+    # SQL과 바인딩
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE # Hibernate 6에서 파라미터 바인딩
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE # (레거시, 혹시 모를 대비)
+    org.springframework.jdbc.core: DEBUG # NamedParameterJdbcTemplate 파라미터
+
+    # 웹/예외 흐름
+    org.springframework.web: DEBUG
+    org.springframework.web.servlet.DispatcherServlet: DEBUG
+    org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: DEBUG
+    org.springframework.boot.autoconfigure.web: DEBUG
+
+    # 커넥션 풀
+    com.zaxxer.hikari: DEBUG
+
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: always
+  tomcat:
+    accesslog:
+      enabled: true # 요청이 실제로 들어오는지/상태코드 확인용
+      pattern: '%h %l %u %t "%r" %s %b %D'
+
 spring:
+  mvc:
+    log-request-details: true
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
