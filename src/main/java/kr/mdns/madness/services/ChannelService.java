@@ -164,8 +164,6 @@ public class ChannelService {
                 List<Channel> channels = new ArrayList<>();
 
                 if (order.equals("participants")) {
-                        System.out.println("participants, HERE = " + snapAt + "COUNT = " + count);
-                        // channels = searchNameOrderBy(keyword, cursor, asc, size, count);
                         List<ChannelAndCount> list = searchByLiveCount(keyword, snapAt, count, cursor, size, asc);
                         return list.stream()
                                         .map(c -> ChannelDto.from(c,

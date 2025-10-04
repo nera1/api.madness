@@ -79,14 +79,7 @@ public class ChannelLiveRollupSyncService {
 
     @Transactional
     public int deleteStaleOlderThanLatestMinus(Duration ttl) {
-        OffsetDateTime latest = jdbc.queryForObject(
-                "SELECT MAX(snap_at) FROM channel_live_rollup",
-                new MapSqlParameterSource(),
-                OffsetDateTime.class);
-        if (latest == null)
-            return 0;
-
-        OffsetDateTime cutoff = latest.minus(ttl);
+        OffsetDateTime cutoff = OffsetDateTime.now().minus(ttl);
         return jdbc.update(
                 liveRollupConfig.getSql().getDeleteStale(),
                 new MapSqlParameterSource("snapAt", cutoff));

@@ -18,8 +18,8 @@ public class ChannelConnectionCountScheduler {
         channelLiveRollupSyncService.replaceAllSnapshot();
     }
 
-    @Scheduled(cron = "20 2/30 * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "20 */5 * * * *", zone = "Asia/Seoul")
     public void purgeOldSnapshots() {
-        channelLiveRollupSyncService.deleteStaleOlderThanLatestMinus(Duration.ofMinutes(30));
+        channelLiveRollupSyncService.deleteStaleOlderThanLatestMinus(Duration.ofMinutes(10));
     }
 }
