@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: h2
+    active: dev
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:

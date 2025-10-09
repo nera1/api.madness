@@ -25,7 +25,7 @@ public class LiveRollupConfig {
         private String upsertUpdate;
         private String upsertInsert;
 
-        private String deleteStale = "DELETE FROM channel_live_rollup WHERE observed_at < :observedAt";
+        private String deleteStale = "DELETE FROM channel_live_rollup WHERE snap_at < :snapAt";
 
     }
 }

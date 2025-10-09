@@ -24,7 +24,7 @@ import kr.mdns.madness.record.SubscriptionKey;
 import kr.mdns.madness.services.ChannelConnectionCountService;
 import lombok.RequiredArgsConstructor;
 
-@Profile("!h2")
+@Profile("prod")
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSocketMessageBroker

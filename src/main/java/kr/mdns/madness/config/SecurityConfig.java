@@ -34,12 +34,6 @@ public class SecurityConfig {
         private final SecurityExceptionHandler securityExceptionHandler;
 
         @Bean
-        public WebSecurityCustomizer h2Ignore() {
-                return web -> web.ignoring()
-                                .requestMatchers("/h2-console/**");
-        }
-
-        @Bean
         public PasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder();
         }
