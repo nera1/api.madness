@@ -33,6 +33,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache' 
     implementation 'com.github.ben-manes.caffeine:caffeine'
 
+    // Flyway
+    implementation("org.flywaydb:flyway-core")
+    runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+
     implementation 'com.github.f4b6a3:uuid-creator:6.1.1'
 
     // websocket

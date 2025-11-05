@@ -32,8 +32,8 @@ cors:
 
 app:
   cookie:
-    secure: true
-    sameSite: None
+
+
     domain: .madn.es
 
 live-rollup:
