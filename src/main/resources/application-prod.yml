@@ -1,48 +1,8 @@
 spring:
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: update
-  datasource:
-    url: ${MD_URL}?prepareThreshold=0&preferQueryMode=simple
-    username: ${MD_USERNAME}
-    password: ${MD_PASSWORD}
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      maximum-pool-size: 10
-      minimum-idle: 2
-      connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
-      leak-detection-threshold: 30000
-
-jwt:
-  secret: ${MD_JWT_SECRET}
-  access-exp-ms: ${MD_JWT_EXP_MS}
-  refresh-exp-sec: ${MD_JWT_REFRESH_EXP_SEC}
-
-# cors:
-#   allowed-origins:
-#     - https://madn.es
-#   redirect-url: https://madn.es
-
-cors:
-  allowed-origin-patterns:
-    - "*"
-
-app:
-  cookie:
-
-
-    domain: .madn.es
-
-live-rollup:
-  batch-size: 1000
-  sql:
-    upsert: >
-      INSERT INTO channel_live_rollup (public_id, live_count, snap_at)
-      VALUES (:publicId, :liveCount, :snapAt)
-      ON CONFLICT (public_id, snap_at)
-      DO UPDATE SET live_count = EXCLUDED.live_count
-    delete-stale: >
-      DELETE FROM channel_live_rollup WHERE snap_at < :snapAt
+  application:
+    name: madness
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration
