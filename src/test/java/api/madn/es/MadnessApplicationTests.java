@@ -1,4 +1,4 @@
-package madn.es;
+package api.madn.es;
 
 class MadnessApplicationTests {
 
