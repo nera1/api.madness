@@ -37,3 +37,8 @@ out/
 ### VS Code ###
 .vscode/
 .env
+
+# Logs
+logs/
+*.log
+*.jsonl
