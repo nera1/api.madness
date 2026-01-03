@@ -37,6 +37,8 @@ dependencies {
     implementation("org.flywaydb:flyway-core")
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
     implementation("com.github.f4b6a3:uuid-creator:6.1.1")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")

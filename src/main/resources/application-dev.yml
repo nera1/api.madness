@@ -6,3 +6,15 @@ spring:
       - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
       - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
       - org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration
+app:
+  http-jsonl:
+    enabled: true
+    dir: ./logs/http
+    request-file: requests.jsonl
+    response-file: responses.jsonl
+    max-body-bytes: 1048576
+    redact-headers: [authorization, cookie, set-cookie]
+    redact-json-fields: [password, passwd, secret, token, refreshToken, accessToken]
+logging:
+  pattern:
+    console: "%msg%n"
