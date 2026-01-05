@@ -15,7 +15,9 @@ import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
-import java.util.UUID
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
 
 class HttpJsonlLoggingFilter(
@@ -26,49 +28,68 @@ class HttpJsonlLoggingFilter(
     private val log = LoggerFactory.getLogger(javaClass)
 
     private val dirPath: Path = Path.of(props.dir).toAbsolutePath().normalize()
-    private val reqPath: Path = dirPath.resolve(props.requestFile)
-    private val resPath: Path = dirPath.resolve(props.responseFile)
+    private val zoneId: ZoneId = ZoneId.systemDefault()
 
-    private val reqLine = AtomicLong(0)
-    private val resLine = AtomicLong(0)
+    private val reqCounters = ConcurrentHashMap<Path, AtomicLong>()
+    private val resCounters = ConcurrentHashMap<Path, AtomicLong>()
+    private val counterInitLock = Any()
 
     init {
         Files.createDirectories(dirPath)
-        if (!Files.exists(reqPath)) Files.createFile(reqPath)
-        if (!Files.exists(resPath)) Files.createFile(resPath)
-
-        reqLine.set(Files.lines(reqPath).use { it.count() })
-        resLine.set(Files.lines(resPath).use { it.count() })
     }
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         val reqWrap = ContentCachingRequestWrapper(request)
         val resWrap = ContentCachingResponseWrapper(response)
 
-        val traceId = UUID.randomUUID().toString()
-        val started = System.nanoTime()
-
         try {
             chain.doFilter(reqWrap, resWrap)
         } finally {
-            val tookMs = (System.nanoTime() - started) / 1_000_000
-
             val method = reqWrap.method
             val uri = reqWrap.requestURI
             val qs = reqWrap.queryString?.let { "?$it" } ?: ""
             val uriWithQs = "$uri$qs"
 
+            val status = resWrap.status
+
+            val reqPath = todayReqPath("requests")
+            val resPath = todayReqPath("responses")
+
+            val reqCounter = getOrInitCounter(reqPath, reqCounters)
+            val resCounter = getOrInitCounter(resPath, resCounters)
+
+            val statusCol = "-->"
             val reqEntry = buildRequestEntry(reqWrap)
-            val reqLineNo = appendJsonLine(reqPath, reqEntry, reqLine)
-            val reqFileUri = reqPath.toUri().toString()
-            log.info("[REQ] {} {}  {}:{}", method, uriWithQs, reqFileUri, reqLineNo)
+            val reqLineNo = appendJsonLine(reqPath, reqEntry, reqCounter)
+            log.info("[REQ] {} {} {}  {}:{}", statusCol, method, uriWithQs, reqPath.toUri().toString(), reqLineNo)
 
             val resEntry = buildResponseEntry(resWrap)
-            val resLineNo = appendJsonLine(resPath, resEntry, resLine)
-            val resFileUri = resPath.toUri().toString()
-            log.info("[RES]  {} {}  {}:{}", method, uriWithQs, resFileUri, resLineNo)
+            val resLineNo = appendJsonLine(resPath, resEntry, resCounter)
+            log.info("[RES] {} {} {}  {}:{}", status, method, uriWithQs, resPath.toUri().toString(), resLineNo)
 
             resWrap.copyBodyToResponse()
+        }
+    }
+
+    private fun todayReqPath(prefix: String): Path {
+        val d = LocalDate.now(zoneId).toString()
+        return dirPath.resolve("$prefix-$d.jsonl")
+    }
+
+    private fun getOrInitCounter(path: Path, map: ConcurrentHashMap<Path, AtomicLong>): AtomicLong {
+        map[path]?.let { return it }
+
+        synchronized(counterInitLock) {
+            map[path]?.let { return it }
+
+            Files.createDirectories(path.parent)
+
+            val existingLines =
+                if (Files.exists(path)) Files.lines(path).use { it.count() } else 0L
+
+            val counter = AtomicLong(existingLines)
+            map[path] = counter
+            return counter
         }
     }
 
@@ -111,9 +132,17 @@ class HttpJsonlLoggingFilter(
     private fun appendJsonLine(path: Path, obj: Any, counter: AtomicLong): Long {
         val json = objectMapper.writeValueAsString(obj)
         val lineNo = counter.incrementAndGet()
-        Files.newBufferedWriter(path, Charsets.UTF_8, StandardOpenOption.APPEND).use { bw: BufferedWriter ->
+
+        Files.newBufferedWriter(
+            path,
+            Charsets.UTF_8,
+            StandardOpenOption.CREATE,
+            StandardOpenOption.APPEND,
+            StandardOpenOption.WRITE
+        ).use { bw: BufferedWriter ->
             bw.append(json).append("\n")
         }
+
         return lineNo
     }
 

@@ -11,3 +11,11 @@
 {"ts":"2026-01-03T14:36:24.656720700Z","traceId":"024bfc3b-95f6-410b-92f8-f8aa53847896","type":"response","method":"GET","uri":"/auth/logout","status":200,"tookMs":52,"headers":{"Content-Length":["6"]},"contentType":"text/html;charset=UTF-8","body":"logout"}
 {"uri":"/auth/logout","status":200,"headers":{"Content-Length":["6"]},"contentType":"text/html;charset=UTF-8","body":"logout"}
 {"body":"logout","headers":{"Content-Length":["6"]}}
+{"body":"logout","headers":{"Content-Length":["6"]}}
+{"body":"logout","headers":{"Content-Length":["6"]}}
+{"body":"logout","headers":{"Content-Length":["6"]}}
+{"body":null,"headers":{"Allow":["POST"],"X-Content-Type-Options":["nosniff"],"X-XSS-Protection":["0"],"Cache-Control":["no-cache, no-store, max-age=0, must-revalidate"],"Pragma":["no-cache"],"Expires":["0"],"X-Frame-Options":["DENY"]}}
+{"body":null,"headers":{"Allow":["POST"],"X-Content-Type-Options":["nosniff"],"X-XSS-Protection":["0"],"Cache-Control":["no-cache, no-store, max-age=0, must-revalidate"],"Pragma":["no-cache"],"Expires":["0"],"X-Frame-Options":["DENY"]}}
+{"body":null,"headers":{"Allow":["POST"],"X-Content-Type-Options":["nosniff"],"X-XSS-Protection":["0"],"Cache-Control":["no-cache, no-store, max-age=0, must-revalidate"],"Pragma":["no-cache"],"Expires":["0"],"X-Frame-Options":["DENY"]}}
+{"body":null,"headers":{"Allow":["POST"],"X-Content-Type-Options":["nosniff"],"X-XSS-Protection":["0"],"Cache-Control":["no-cache, no-store, max-age=0, must-revalidate"],"Pragma":["no-cache"],"Expires":["0"],"X-Frame-Options":["DENY"]}}
+{"body":null,"headers":{"Allow":["POST"],"X-Content-Type-Options":["nosniff"],"X-XSS-Protection":["0"],"Cache-Control":["no-cache, no-store, max-age=0, must-revalidate"],"Pragma":["no-cache"],"Expires":["0"],"X-Frame-Options":["DENY"]}}

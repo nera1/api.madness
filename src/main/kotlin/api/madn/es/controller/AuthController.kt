@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/auth")
 class AuthController {
-    @PostMapping("/login")
+    @PostMapping("/signin")
     fun login(): String {
         return "login"
     }
@@ -18,7 +18,7 @@ class AuthController {
         return "register"
     }
 
-    @GetMapping("/logout")
+    @GetMapping("/signout")
     fun logout(): String {
         return "logout"
     }
