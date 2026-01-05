@@ -39,6 +39,4 @@ out/
 .env
 
 # Logs
-logs/
-*.log
-*.jsonl
+/logs/
