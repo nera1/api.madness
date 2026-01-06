@@ -28,14 +28,8 @@ jobs:
             options:
               ports: 8080
               env:
-                - name: SB_URL
-                  value: ${{ secrets.SB_URL }}
-                - name: SB_USERNAME
-                  value: ${{ secrets.SB_USERNAME }}
-                - name: SB_PASSWORD
-                  value: ${{ secrets.SB_PASSWORD }}
-                - name: SPRING_PROFILES_ACTIVE
-                  value: prod
+                - name: ACTIVE_PROFILES
+                  value: production
               buildenv: []
             context:
               git:
