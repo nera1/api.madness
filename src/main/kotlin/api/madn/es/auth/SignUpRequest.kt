@@ -1,4 +1,4 @@
-package api.madn.es.common.request
+package api.madn.es.auth
 
 import jakarta.validation.constraints.NotBlank
 

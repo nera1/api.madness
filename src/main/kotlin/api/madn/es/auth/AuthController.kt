@@ -1,6 +1,5 @@
-package api.madn.es.controller
+package api.madn.es.auth
 
-import api.madn.es.common.request.SignInRequest
 import api.madn.es.common.response.ApiResponse
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,7 +17,7 @@ class AuthController {
     }
 
     @PostMapping("/signup")
-    fun register(@Valid @RequestBody request : SignInRequest): ApiResponse<*> {
+    fun register(@Valid @RequestBody request : SignUpRequest): ApiResponse<*> {
         return ApiResponse.success(request)
     }
 
