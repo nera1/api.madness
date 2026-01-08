@@ -3,9 +3,10 @@ plugins {
     id("org.springframework.boot") version "3.4.2"
     id("io.spring.dependency-management") version "1.1.7"
 
-    id("org.jetbrains.kotlin.jvm") version "2.0.0"
-    id("org.jetbrains.kotlin.plugin.spring") version "2.0.0"
-    id("org.jetbrains.kotlin.plugin.jpa") version "2.0.21"
+    val kotlinVersion = "2.0.21"
+    id("org.jetbrains.kotlin.jvm") version kotlinVersion
+    id("org.jetbrains.kotlin.plugin.spring") version kotlinVersion
+    id("org.jetbrains.kotlin.plugin.jpa") version kotlinVersion
 }
 
 group = "madn.es"
