@@ -36,7 +36,7 @@ dependencies {
 
     // Flyway
     implementation("org.flywaydb:flyway-core")
-    runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+    runtimeOnly("com.mysql:mysql-connector-j")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
