@@ -36,6 +36,7 @@ dependencies {
 
     // Flyway
     implementation("org.flywaydb:flyway-core")
+    runtimeOnly("org.flywaydb:flyway-mysql")
     runtimeOnly("com.mysql:mysql-connector-j")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
