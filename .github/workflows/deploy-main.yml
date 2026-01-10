@@ -30,6 +30,12 @@ jobs:
               env:
                 - name: ACTIVE_PROFILES
                   value: production
+                - name: DB_USERNAME
+                  value: ${{ secrets.DB_USERNAME }}
+                - name: DB_PASSWORD
+                  value: ${{ secrets.DB_PASSWORD }}
+                - name: DB_URL
+                  value: ${{ secrets.DB_URL }}
               buildenv: []
             context:
               git:
