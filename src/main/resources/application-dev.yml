@@ -1,20 +1,27 @@
 spring:
   application:
     name: madness
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-      - org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration
+  config:
+    import: optional:file:./properties/dev.properties
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
 app:
   http-jsonl:
-    enabled: true
-    dir: ./logs/http
-    request-file: requests.jsonl
-    response-file: responses.jsonl
-    max-body-bytes: 1048576
-    redact-headers: [authorization, cookie, set-cookie]
-    redact-json-fields: [password, passwd, secret, token, refreshToken, accessToken]
-logging:
-  pattern:
-    console: "%msg%n"
+    enabled: false
+

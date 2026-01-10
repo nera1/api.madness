@@ -38,5 +38,11 @@ out/
 .vscode/
 .env
 
-# Logs
+### Logs ###
 /logs/
+
+### env ###
+docker/local/.env
+
+### properties ###
+dev.properties

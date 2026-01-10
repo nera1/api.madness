@@ -4,7 +4,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://madness.c3iqyqm6820z.ap-northeast-2.rds.amazonaws.com:3306/madness?useSSL=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
