@@ -43,6 +43,3 @@ out/
 
 ### env ###
 docker/local/.env
-
-### properties ###
-dev.properties

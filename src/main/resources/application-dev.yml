@@ -1,8 +1,7 @@
 spring:
-  application:
-    name: madness
   config:
-    import: optional:file:./properties/dev.properties
+    import: optional:file:./docker/local/.env[.properties]
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DB_URL}
