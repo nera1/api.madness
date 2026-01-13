@@ -10,13 +10,15 @@ data class SignInRequest (
     val email: String,
 
     @field:NotBlank
-    @field:Size(min = 4, max = 32)
+    @field:Size(max = 64)
     val password: String
 )
 
 data class SignUpRequest(
     @field:NotBlank
     val email: String,
+
     @field:NotBlank
+    @field:Size(max = 64)
     val password: String
 )

@@ -1,5 +1,7 @@
-package api.madn.es.auth
+package api.madn.es.auth.api
 
+import api.madn.es.auth.dto.SignInRequest
+import api.madn.es.auth.dto.SignUpRequest
 import api.madn.es.common.response.ApiResponse
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.GetMapping
@@ -12,17 +14,17 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/auth")
 class AuthController {
     @PostMapping("/signin")
-    fun login(@Valid @RequestBody request : SignInRequest): ApiResponse<*> {
-        return ApiResponse.success(request)
+    fun signIn(@Valid @RequestBody request : SignInRequest): ApiResponse<*> {
+        return ApiResponse.Companion.success(request)
     }
 
     @PostMapping("/signup")
-    fun register(@Valid @RequestBody request : SignUpRequest): ApiResponse<*> {
-        return ApiResponse.success(request)
+    fun signUp(@Valid @RequestBody request : SignUpRequest): ApiResponse<*> {
+        return ApiResponse.Companion.success(request)
     }
 
     @GetMapping("/signout")
-    fun logout(): ApiResponse<*> {
-        return ApiResponse.success("signout")
+    fun signOut(): ApiResponse<*> {
+        return ApiResponse.Companion.success("signout")
     }
 }
