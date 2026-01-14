@@ -15,16 +15,16 @@ import org.springframework.web.bind.annotation.RestController
 class AuthController {
     @PostMapping("/signin")
     fun signIn(@Valid @RequestBody request : SignInRequest): ApiResponse<*> {
-        return ApiResponse.Companion.success(request)
+        return ApiResponse.success(request)
     }
 
     @PostMapping("/signup")
     fun signUp(@Valid @RequestBody request : SignUpRequest): ApiResponse<*> {
-        return ApiResponse.Companion.success(request)
+        return ApiResponse.success(request)
     }
 
     @GetMapping("/signout")
     fun signOut(): ApiResponse<*> {
-        return ApiResponse.Companion.success("signout")
+        return ApiResponse.success("signout")
     }
 }
