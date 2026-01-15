@@ -15,6 +15,7 @@ data class SignInRequest (
 )
 
 data class SignUpRequest(
+    @field:Email
     @field:NotBlank
     val email: String,
 

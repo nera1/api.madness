@@ -6,17 +6,16 @@ import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
-import org.springframework.data.annotation.Id
+import jakarta.persistence.Table
+import jakarta.persistence.Id
 import java.time.LocalDateTime
 
 @Entity
+@Table(name = "users")
 class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0
-
-    @Column(name = "username", length = 32, unique = true)
-    var username: String? = null
 
     @Column(name = "display_name", length = 16)
     var displayName: String? = null
