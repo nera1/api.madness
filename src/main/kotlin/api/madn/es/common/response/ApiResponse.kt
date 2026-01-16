@@ -1,10 +1,13 @@
 package api.madn.es.common.response
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import java.time.OffsetDateTime
 
 data class ApiResponse<T>(
     val success : Boolean,
+    @field:JsonInclude(JsonInclude.Include.NON_NULL)
     val data : T? = null,
+    @field:JsonInclude(JsonInclude.Include.NON_NULL)
     val error : ApiError? = null,
     val timestamp: OffsetDateTime? = OffsetDateTime.now()
 ) {
