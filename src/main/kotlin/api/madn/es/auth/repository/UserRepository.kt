@@ -18,7 +18,7 @@ interface UserRepository : JpaRepository<User, Long> {
             VALUES (:displayName, :status)
         """
     )
-    fun save(
+    fun saveUser(
         @Param("displayName") displayName: String?,
         @Param("status") status: UserStatus? = UserStatus.SUSPENDED
     ): Int
