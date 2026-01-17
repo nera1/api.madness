@@ -1,8 +1,8 @@
-package api.madn.es.auth
+package api.madn.es.auth.service
 
 import org.springframework.stereotype.Service
 
 @Service
 class AuthService {
-    
+
 }

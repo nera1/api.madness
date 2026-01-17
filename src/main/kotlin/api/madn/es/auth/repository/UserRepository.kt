@@ -14,12 +14,11 @@ interface UserRepository : JpaRepository<User, Long> {
     @Query(
         nativeQuery = true,
         value = """
-            INSERT INTO users (username, display_name, status)
-            VALUES (:username, :displayName, :status)
+            INSERT INTO users (display_name, status)
+            VALUES (:displayName, :status)
         """
     )
     fun save(
-        @Param("username") username: String?,
         @Param("displayName") displayName: String?,
         @Param("status") status: UserStatus? = UserStatus.SUSPENDED
     ): Int
