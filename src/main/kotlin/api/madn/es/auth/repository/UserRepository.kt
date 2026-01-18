@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional
 
 interface UserRepository : JpaRepository<User, Long> {
     @Modifying
-    @Transactional
     @Query(
         nativeQuery = true,
         value = """
