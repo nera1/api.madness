@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class AuthService {
+
     @Transactional
     fun signUp(email: String, password: String): Long {
         return 0L

@@ -14,4 +14,13 @@ interface UserCredentialRepository : JpaRepository<UserCredential, Long> {
         VALUES (:userId, :email, :passwordHash)
         """)
     fun saveUserCredential(userCredential: UserCredential)
+
+    @Query(
+        nativeQuery = true,
+        value = """
+            SELECT 1 EXISTS 
+            FROM user_credential
+            WHERE email = :email
+        """)
+    fun existsEmail(email : String) {}
 }
