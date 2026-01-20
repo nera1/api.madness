@@ -22,5 +22,9 @@ spring:
 
 app:
   http-jsonl:
-    enabled: false
+    enabled: true
+
+logging:
+  pattern:
+    console: "%level %msg%n"
 

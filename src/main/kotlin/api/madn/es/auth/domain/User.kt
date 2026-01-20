@@ -12,17 +12,17 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "users")
-class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0
-
+class User (
     @Column(name = "display_name", length = 16)
-    var displayName: String? = null
+    var displayName: String? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     var status: UserStatus = UserStatus.SUSPENDED
+) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0
 
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
     val createdAt: LocalDateTime? = null

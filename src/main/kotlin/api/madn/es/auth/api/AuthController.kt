@@ -23,7 +23,7 @@ class AuthController(
 
     @PostMapping("/signup")
     fun signUp(@Valid @RequestBody request : SignUpRequest): ApiResponse<*> {
-        return ApiResponse.success(request)
+        return ApiResponse.success(authService.signUp(request))
     }
 
     @GetMapping("/signout")

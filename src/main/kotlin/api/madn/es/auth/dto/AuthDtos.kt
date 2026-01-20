@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 
 data class SignInRequest (
-    @field:Email
     @field:NotBlank
     val email: String,
 
@@ -16,7 +15,10 @@ data class SignInRequest (
 )
 
 data class SignUpRequest(
-    @field:Email(message = "invalid email format")
+    @field:Pattern(
+        regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+        message = "invalid email format"
+    )
     @field:NotBlank
     val email: String,
 
@@ -26,5 +28,9 @@ data class SignUpRequest(
         message = "password must contain letters and numbers"
     )
     @field:Size(max = 64)
-    val password: String
+    val password: String,
+
+    @field:NotBlank
+    @field:Size(max = 16)
+    val displayName: String
 )
