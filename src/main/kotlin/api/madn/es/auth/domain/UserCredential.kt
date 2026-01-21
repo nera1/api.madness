@@ -10,19 +10,19 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "user_credentials")
-class UserCredential {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long = 0
-
+class UserCredential(
     @Column(name = "user_id", nullable = false)
-    var userId: Long = 0
+    var userId: Long = 0,
 
     @Column(name = "email", length = 128)
-    lateinit var email: String
+    var email: String,
 
     @Column(name = "password_hash", length = 255)
-    lateinit var passwordHash: String
+    var passwordHash: String
+) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0
 
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
     val createdAt: LocalDateTime? = null
