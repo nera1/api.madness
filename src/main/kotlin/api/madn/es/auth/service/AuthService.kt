@@ -3,6 +3,7 @@ package api.madn.es.auth.service
 import api.madn.es.auth.domain.User
 import api.madn.es.auth.domain.UserCredential
 import api.madn.es.auth.dto.SignUpRequest
+import api.madn.es.auth.exception.EmailDuplicationException
 import api.madn.es.auth.repository.UserCredentialRepository
 import api.madn.es.auth.repository.UserRepository
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -20,10 +21,10 @@ class AuthService(
 
     @Transactional
     fun signUp(request: SignUpRequest): Long {
-        if (emailExists(request.email)) return 1L
+        if (emailExists(request.email)) throw EmailDuplicationException()
 
         val user = userRepo.saveAndFlush(User(request.displayName))
-        val encoded = passwordEncoder.encode(request.password)
+        val hashed = passwordEncoder.encode(request.password)
 
         userCredentialRepo.save(UserCredential(user.id!!, request.email, encoded))
         return 0L
