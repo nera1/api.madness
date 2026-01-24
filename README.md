@@ -3,5 +3,5 @@
 # Madness — REST API
 
 ## Requirement
-- Java 17
+- Kotlin 2.0.21
 - Spring Boot 3.4.2

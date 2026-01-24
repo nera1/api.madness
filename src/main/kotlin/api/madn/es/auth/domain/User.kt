@@ -18,7 +18,7 @@ open class User (
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    var status: UserStatus = UserStatus.SUSPENDED
+    var status: UserStatus = UserStatus.PENDING
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,5 +33,5 @@ open class User (
 }
 
 enum class UserStatus {
-    ACTIVE,SUSPENDED,DELETED
+    ACTIVE,PENDING,DELETED
 }
