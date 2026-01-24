@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "users")
-class User (
+open class User (
     @Column(name = "display_name", length = 16)
     var displayName: String? = null,
 
@@ -22,7 +22,8 @@ class User (
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0
+    var id: Long? = null
+        protected set
 
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
     val createdAt: LocalDateTime? = null

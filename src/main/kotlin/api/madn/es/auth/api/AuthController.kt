@@ -1,7 +1,7 @@
 package api.madn.es.auth.api
 
-import api.madn.es.auth.dto.SignInRequest
-import api.madn.es.auth.dto.SignUpRequest
+import api.madn.es.auth.data.SignInRequest
+import api.madn.es.auth.data.SignUpRequest
 import api.madn.es.auth.service.AuthService
 import api.madn.es.common.response.ApiResponse
 import jakarta.validation.Valid
@@ -23,7 +23,8 @@ class AuthController(
 
     @PostMapping("/signup")
     fun signUp(@Valid @RequestBody request : SignUpRequest): ApiResponse<*> {
-        return ApiResponse.success(authService.signUp(request))
+        val user = authService.signUp(request)
+        return ApiResponse.success(user)
     }
 
     @GetMapping("/signout")

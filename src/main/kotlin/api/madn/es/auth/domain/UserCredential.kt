@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "user_credentials")
-class UserCredential(
+open class UserCredential(
     @Column(name = "user_id", nullable = false)
     var userId: Long = 0,
 
@@ -22,7 +22,8 @@ class UserCredential(
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0
+    var id: Long = 0
+        protected set
 
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
     val createdAt: LocalDateTime? = null
