@@ -12,24 +12,26 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "users")
-open class User (
+open class User(
     @Column(name = "display_name", length = 16)
-    var displayName: String? = null,
+    open var displayName: String? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    var status: UserStatus = UserStatus.PENDING
+    open var status: UserStatus = UserStatus.PENDING
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+    open var id: Long? = null
         protected set
 
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
-    val createdAt: LocalDateTime? = null
+    open var createdAt: LocalDateTime? = null
+        protected set
 
     @Column(name = "updated_at", nullable = false, insertable = false, updatable = false)
-    val updatedAt: LocalDateTime? = null
+    open var updatedAt: LocalDateTime? = null
+        protected set
 }
 
 enum class UserStatus {
