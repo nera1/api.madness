@@ -23,7 +23,7 @@ data class SignUpRequest(
 
     @field:NotBlank
     @field:Pattern(
-        regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,64}$",
+        regexp = """^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_=+-])[A-Za-z\d~!@#$%^&*()_=+-]{8,64}$""",
         message = "password must contain letters and numbers"
     )
     @field:Size(max = 64)
