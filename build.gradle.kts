@@ -36,6 +36,9 @@ dependencies {
 
     implementation("io.github.cdimascio:dotenv-java:3.2.0")
 
+    // Mail
+    implementation("org.springframework.boot:spring-boot-starter-mail")
+
     // Flyway
     implementation("org.flywaydb:flyway-core")
     runtimeOnly("org.flywaydb:flyway-mysql")
