@@ -5,3 +5,8 @@ data class SignupResponse (
     val email: String = "",
     val displayName: String = "",
 )
+
+data class SignInResponse (
+    val email: String = "",
+    val displayName: String  = "",
+)

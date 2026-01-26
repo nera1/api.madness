@@ -1,5 +1,6 @@
 package api.madn.es.auth.service
 
+import api.madn.es.auth.data.SignInRequest
 import api.madn.es.auth.domain.User
 import api.madn.es.auth.domain.UserCredential
 import api.madn.es.auth.data.SignUpRequest
@@ -28,5 +29,10 @@ class AuthService(
 
         userCredentialRepo.save(UserCredential(user.id!!, request.email, hashed))
         return SignupResponse(user.id!!, request.email, request.displayName)
+    }
+
+    @Transactional
+    fun signin(request: SignInRequest) : Unit {
+
     }
 }
