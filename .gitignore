@@ -36,10 +36,10 @@ out/
 
 ### VS Code ###
 .vscode/
-.env
 
 ### Logs ###
 /logs/
 
 ### env ###
-docker/local/.env
+.env
+/docker/local/.env

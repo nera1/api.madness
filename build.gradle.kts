@@ -36,8 +36,12 @@ dependencies {
 
     implementation("io.github.cdimascio:dotenv-java:3.2.0")
 
+    //thymeleaf
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+
     // Mail
-    implementation("org.springframework.boot:spring-boot-starter-mail")
+    implementation(platform("software.amazon.awssdk:bom:2.25.0"))
+    implementation("software.amazon.awssdk:sesv2")
 
     // Flyway
     implementation("org.flywaydb:flyway-core")

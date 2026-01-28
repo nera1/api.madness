@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title th:text="${subject}">회원가입 인증</title>
+</head>
+
+<body style="margin:0; padding:0; background:#f6f8fb;">
+<!-- Preheader (미리보기 문구) -->
+<div style="display:none; max-height:0; overflow:hidden; opacity:0; color:transparent;">
+    회원가입을 완료하려면 이메일 인증을 진행해 주세요.
+</div>
+
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"
+       style="border-collapse:collapse; background:#f6f8fb;">
+    <tr>
+        <td align="center" style="padding:24px 12px;">
+
+            <!-- Container -->
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600"
+                   style="border-collapse:collapse; width:600px; max-width:600px; background:#ffffff; border:1px solid #e6eaf0; border-radius:10px;">
+
+                <!-- Header bar -->
+                <tr>
+                    <td style="background:#1f2937; padding:18px 20px; border-radius:10px 10px 0 0;">
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                               style="border-collapse:collapse;">
+                            <tr>
+                                <td align="left"
+                                    style="font-family:Arial, Helvetica, sans-serif; font-size:18px; line-height:22px; color:#ffffff; font-weight:700;"
+                                    th:text="${model.brandName}">
+                                    MADN.ES
+                                </td>
+                                <td align="right"
+                                    style="font-family:Arial, Helvetica, sans-serif; font-size:12px; line-height:16px; color:#cbd5e1;">
+                                    Security
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                    <td style="padding:26px 24px 10px 24px;">
+                        <div style="font-family:Arial, Helvetica, sans-serif; color:#111827;">
+
+                            <div style="font-size:20px; line-height:28px; font-weight:700; margin:0 0 12px 0;">
+                                자격 증명 확인
+                            </div>
+
+                            <div style="font-size:14px; line-height:22px; color:#374151; margin:0 0 10px 0;">
+                                안녕하세요, <span style="font-weight:700" th:text="${model.displayName}">홍길동</span>님.
+                            </div>
+
+                            <div style="font-size:14px; line-height:22px; color:#374151; margin:0 0 14px 0;"
+                                 th:text="${model.description}">
+                                요청을 완료하려면 아래 버튼을 눌러 인증을 완료해 주세요.
+                            </div>
+
+                            <!-- CTA Button -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"
+                                   style="border-collapse:collapse; margin:18px 0 12px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a th:href="${model.verifyUrl}"
+                                           style="
+                             display:inline-block;
+                             font-family:Arial, Helvetica, sans-serif;
+                             font-size:14px;
+                             font-weight:700;
+                             line-height:18px;
+                             text-decoration:none;
+                             padding:12px 18px;
+                             border-radius:10px;
+                             background:#111827;
+                             color:#ffffff;
+                             border:1px solid #111827;">
+                                            이메일 인증 완료하기
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div style="font-size:12px; line-height:18px; color:#6b7280; margin:0 0 14px 0;">
+                                버튼이 동작하지 않으면 아래 링크를 복사하여 브라우저에 붙여넣어 주세요.
+                            </div>
+
+                            <div style="font-family:Arial, Helvetica, sans-serif; font-size:12px; line-height:18px; margin:0 0 12px 0;">
+                                <a th:href="${model.verifyUrl}" th:text="${model.verifyUrl}"
+                                   style="color:#2563eb; text-decoration:underline; word-break:break-all;">
+                                    https://api.madn.es/auth/mail?token=...
+                                </a>
+                            </div>
+
+                            <div style="font-size:12px; line-height:18px; color:#6b7280; margin:0 0 18px 0;">
+                                이 링크는 전송 후 <span th:text="${model.expiresInMinutes}">10</span>분 후 만료됩니다.
+                            </div>
+
+                            <div style="border-top:1px solid #eef2f7; margin:18px 0 0 0;"></div>
+
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                    <td style="padding:14px 24px 22px 24px;">
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-size:12px; line-height:18px; color:#6b7280;">
+                            본 요청을 시작하지 않았다면, 계정 보안을 위해 비밀번호 변경을 권장합니다.
+                        </div>
+
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-size:12px; line-height:18px; color:#9ca3af; margin-top:10px;">
+                            © <span th:text="${model.year}">2026</span>
+                            <a th:href="${model.url}" th:text="${model.brandName}"
+                               style="color:#9ca3af; text-decoration:none;">MADN.ES</a>.
+                            All rights reserved.
+                        </div>
+                    </td>
+                </tr>
+
+            </table>
+
+            <div style="font-family:Arial, Helvetica, sans-serif; font-size:11px; line-height:16px; color:#9ca3af; margin-top:10px;">
+                이 메일은 발신 전용입니다.
+            </div>
+
+        </td>
