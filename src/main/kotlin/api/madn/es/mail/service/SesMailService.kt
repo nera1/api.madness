@@ -1,6 +1,6 @@
 package api.madn.es.mail.service
 
-import api.madn.es.mail.data.SignupMailTemplate
+import api.madn.es.mail.template.SignupMailTemplate
 import api.madn.es.mail.domain.SignupMailModel
 import api.madn.es.mail.renderer.ThymeleafMailTemplateRenderer
 import org.springframework.beans.factory.annotation.Value
@@ -57,14 +57,6 @@ class SesMailService(
             to = to,
             subject = template.subject,
             html = renderer.render("signup-mail",  template)
-        )
-    }
-
-    fun sendTestMail(to : String) {
-        sendEmail(
-            to = to,
-            subject = "SES SDK test",
-            html = "<h1>만나서 정말 반가워요!</h1><p>메일 보내기 너무 힘들어요! ☠☠☠</p>"
         )
     }
 }

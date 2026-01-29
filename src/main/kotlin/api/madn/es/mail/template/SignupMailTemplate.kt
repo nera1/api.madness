@@ -1,5 +1,6 @@
-package api.madn.es.mail.data
+package api.madn.es.mail.template
 
+import api.madn.es.mail.data.MailTemplate
 import api.madn.es.mail.domain.SignupMailModel
 
 class SignupMailTemplate(
