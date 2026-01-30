@@ -1,7 +1,7 @@
 package api.madn.es.mail.service
 
 import api.madn.es.mail.template.SignupMailTemplate
-import api.madn.es.mail.domain.SignupMailModel
+import api.madn.es.mail.data.SignupMailData
 import api.madn.es.mail.renderer.ThymeleafMailTemplateRenderer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -51,7 +51,7 @@ class SesMailService(
     }
 
     fun sendSignupMail(displayName : String, to : String) {
-        val model = SignupMailModel(displayName, to)
+        val model = SignupMailData(displayName, to)
         val template = SignupMailTemplate(model)
         sendEmail(
             to = to,

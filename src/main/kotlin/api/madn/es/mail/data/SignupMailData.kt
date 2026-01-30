@@ -1,6 +1,6 @@
-package api.madn.es.mail.domain
+package api.madn.es.mail.data
 
-data class SignupMailModel(
+data class SignupMailData(
     val displayName: String,
     val email: String,
     val description: String = "요청을 완료하려면 아래 버튼을 눌러 인증을 완료해 주세요.",
