@@ -1,7 +1,7 @@
 package api.madn.es.mail.data
 
-interface MailData {
+interface MailTemplateData {
     val subject: String
     val to : String
-    val body : String
+    val templateName : String
 }

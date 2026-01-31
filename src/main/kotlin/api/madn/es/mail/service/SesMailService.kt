@@ -1,8 +1,6 @@
 package api.madn.es.mail.service
 
-import api.madn.es.mail.data.MailData
-import api.madn.es.mail.template.SignupMailTemplate
-import api.madn.es.mail.data.SignupMailData
+import api.madn.es.mail.data.MailTemplateData
 import api.madn.es.mail.renderer.ThymeleafMailTemplateRenderer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -24,7 +22,6 @@ class SesMailService(
         require(text != null || html != null) {
             "Email content is required. Provide either text or HTML."
         }
-
         require(from.isNotBlank()) {
             "MAIL_FROM environment variable is not configured."
         }
@@ -51,11 +48,12 @@ class SesMailService(
         ses.sendEmail(req)
     }
 
-    fun sendSignupMail(data : MailData) {
+    fun sendTemplateEmail(data: MailTemplateData) {
+        val html = renderer.render(data)
         sendEmail(
             to = data.to,
             subject = data.subject,
-            html = renderer.render(data,  template)
+            html = html
         )
     }
 }

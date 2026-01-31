@@ -1,12 +1,10 @@
 package api.madn.es.mail.data
 
 data class SignupMailData(
-    override val subject: String,
     override val to: String,
-    override val body: String
-) : MailData {
-    companion object {
-        private const val filename : String = "signup-mail"
-    }
+    val displayName : String,
+) : MailTemplateData {
+    override val templateName = "signup-mail"
+    override val subject: String = "회원가입을 환영합니다, ${displayName}님"
 }
 

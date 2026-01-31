@@ -8,6 +8,7 @@ import api.madn.es.auth.data.SignupResponse
 import api.madn.es.auth.exception.EmailDuplicationException
 import api.madn.es.auth.repository.UserCredentialRepository
 import api.madn.es.auth.repository.UserRepository
+import api.madn.es.mail.data.SignupMailData
 import api.madn.es.mail.service.SesMailService
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -29,7 +30,11 @@ class AuthService(
         val user = userRepo.save(User(request.displayName))
         val hashed = passwordEncoder.encode(request.password)
         userCredentialRepo.save(UserCredential(user.id!!, request.email, hashed))
-        mailService.sendSignupMail(request.displayName,request.email)
+        val mailData = SignupMailData(
+            displayName = request.displayName,
+            to = request.email
+        )
+        mailService.sendTemplateEmail(mailData)
         return SignupResponse(user.id!!, request.email, request.displayName)
     }
 
