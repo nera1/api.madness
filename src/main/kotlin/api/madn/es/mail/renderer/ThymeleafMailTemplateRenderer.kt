@@ -1,6 +1,6 @@
 package api.madn.es.mail.renderer
 
-import api.madn.es.mail.data.MailTemplate
+import api.madn.es.mail.data.MailData
 import org.springframework.stereotype.Component
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
@@ -10,11 +10,9 @@ import java.util.Locale
 class ThymeleafMailTemplateRenderer(
     private val templateEngine: TemplateEngine
 ) {
-    fun render(templateName: String, template: MailTemplate): String {
+    fun render(data : MailData): String {
         val ctx = Context(Locale.KOREA).apply {
-            setVariable("model", template.model)
-            setVariable("subject", template.subject)
         }
-        return templateEngine.process("mail/${templateName}.html", ctx)
+        return templateEngine.process("mail/${"signup-mail"}.html", ctx)
     }
 }

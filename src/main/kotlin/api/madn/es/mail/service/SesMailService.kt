@@ -1,5 +1,6 @@
 package api.madn.es.mail.service
 
+import api.madn.es.mail.data.MailData
 import api.madn.es.mail.template.SignupMailTemplate
 import api.madn.es.mail.data.SignupMailData
 import api.madn.es.mail.renderer.ThymeleafMailTemplateRenderer
@@ -50,13 +51,11 @@ class SesMailService(
         ses.sendEmail(req)
     }
 
-    fun sendSignupMail(displayName : String, to : String) {
-        val model = SignupMailData(displayName, to)
-        val template = SignupMailTemplate(model)
+    fun sendSignupMail(data : MailData) {
         sendEmail(
-            to = to,
-            subject = template.subject,
-            html = renderer.render("signup-mail",  template)
+            to = data.to,
+            subject = data.subject,
+            html = renderer.render(data,  template)
         )
     }
 }
