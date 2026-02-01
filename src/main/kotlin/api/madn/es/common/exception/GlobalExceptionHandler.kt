@@ -1,4 +1,4 @@
-package api.madn.es.common.response.exception
+package api.madn.es.common.exception
 
 import api.madn.es.auth.exception.EmailDuplicationException
 import api.madn.es.common.response.ApiResponse

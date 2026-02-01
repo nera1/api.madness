@@ -1,4 +1,4 @@
-package api.madn.es.common.response
+package api.madn.es.common
 
 import com.fasterxml.jackson.annotation.JsonInclude
 

@@ -1,4 +1,4 @@
-package api.madn.es.common.response.exception
+package api.madn.es.common.exception
 
 import org.springframework.http.HttpStatus
 

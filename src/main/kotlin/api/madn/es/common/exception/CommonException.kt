@@ -1,4 +1,4 @@
-package api.madn.es.common.response.exception
+package api.madn.es.common.exception
 
 open class CommonException(
     message : String,

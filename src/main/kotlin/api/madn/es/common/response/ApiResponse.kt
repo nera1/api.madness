@@ -1,6 +1,8 @@
 package api.madn.es.common.response
 
-import api.madn.es.common.response.exception.ErrorCode
+import api.madn.es.common.ApiError
+import api.madn.es.common.ErrorDetails
+import api.madn.es.common.exception.ErrorCode
 import com.fasterxml.jackson.annotation.JsonInclude
 import java.time.OffsetDateTime
 
