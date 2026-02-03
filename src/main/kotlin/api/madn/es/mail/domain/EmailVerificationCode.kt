@@ -2,8 +2,6 @@ package api.madn.es.mail.domain
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -31,9 +29,6 @@ open class EmailVerificationCode(
     open var id: Long? = null
         protected set
 
-    @Column(name = "attempt_count", nullable = false)
-    open var attemptCount: Int = 0
-
     @Column(name = "verified_at")
     open var verifiedAt: LocalDateTime? = null
 
@@ -41,5 +36,5 @@ open class EmailVerificationCode(
 
     fun isVerified(): Boolean = verifiedAt != null
 
-    fun canAttempt(maxAttempts: Int = 5): Boolean = attemptCount < maxAttempts
+
 }
