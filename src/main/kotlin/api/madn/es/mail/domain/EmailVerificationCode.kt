@@ -1,11 +1,6 @@
 package api.madn.es.mail.domain
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Entity
@@ -17,12 +12,8 @@ open class EmailVerificationCode(
     @Column(name = "code", length = 6, nullable = false)
     open var code: String,
 
-    @Column(name = "expires_at", length = 6)
-    open var expiresAt: LocalDateTime,
-
-    @Column(name = "created_at", length = 6)
-    open var createdAt: LocalDateTime,
-
+    @Column(name = "expires_at", nullable = false)
+    open var expiresAt: LocalDateTime
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,9 +23,19 @@ open class EmailVerificationCode(
     @Column(name = "verified_at")
     open var verifiedAt: LocalDateTime? = null
 
+    @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
+    open var createdAt: LocalDateTime? = null
+        protected set
+
+    @Column(name = "updated_at", nullable = false, insertable = false, updatable = false)
+    open var updatedAt: LocalDateTime? = null
+        protected set
+
     fun isExpired(): Boolean = LocalDateTime.now().isAfter(expiresAt)
 
     fun isVerified(): Boolean = verifiedAt != null
 
-
+    fun markAsVerified() {
+        verifiedAt = LocalDateTime.now()
+    }
 }
