@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 class EmailVerificationService(
     private val emailVerificationCodeRepository: EmailVerificationCodeRepository
 ) {
-
+    @Transactional
     fun saveEmailVerificationCode(email: String, code : String) {
         val expiresAt = LocalDateTime.now().plusMinutes(10)
 

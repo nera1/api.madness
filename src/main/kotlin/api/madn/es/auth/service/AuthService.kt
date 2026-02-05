@@ -8,12 +8,9 @@ import api.madn.es.auth.data.SignupResponse
 import api.madn.es.auth.exception.EmailDuplicationException
 import api.madn.es.auth.repository.UserCredentialRepository
 import api.madn.es.auth.repository.UserRepository
-import api.madn.es.mail.data.SignupMailData
-import api.madn.es.mail.event.EmailVerificationCodeGeneratedEvent
 import api.madn.es.mail.event.EmailVerificationRequestedEvent
 import api.madn.es.mail.event.VerificationCodeSaveEvent
 import api.madn.es.mail.service.EmailVerificationService
-import api.madn.es.mail.service.SesMailService
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
