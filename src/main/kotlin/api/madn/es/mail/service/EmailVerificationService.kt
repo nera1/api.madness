@@ -11,9 +11,7 @@ class EmailVerificationService(
     private val emailVerificationCodeRepository: EmailVerificationCodeRepository
 ) {
 
-    @Transactional
-    fun generateAndSaveCode(email: String): String {
-        val code = generateVerificationCode()
+    fun saveEmailVerificationCode(email: String, code : String) {
         val expiresAt = LocalDateTime.now().plusMinutes(10)
 
         val verificationCode = EmailVerificationCode(
@@ -23,7 +21,6 @@ class EmailVerificationService(
         )
 
         emailVerificationCodeRepository.save(verificationCode)
-        return code
     }
 
     @Transactional
@@ -39,6 +36,6 @@ class EmailVerificationService(
         return true
     }
 
-    private fun generateVerificationCode(n : Int = 6) : String =
+     fun generateVerificationCode(n : Int = 6) : String =
         CharArray(n) { ('0'.code + (it * 1103515245 + 12345 ushr 16) % 10).toChar() }.joinToString("")
 }
