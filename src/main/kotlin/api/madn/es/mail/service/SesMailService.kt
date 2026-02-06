@@ -18,7 +18,7 @@ class SesMailService(
     @Value("\${mail.from}") private val from: String,
     private val renderer: ThymeleafMailTemplateRenderer
 ) {
-    fun sendEmail(to: String, subject: String, text: String? = null, html: String? = null) {
+    fun sendEmail(to: String, subject: String, html: String? = null, text: String? = null) {
         require(text != null || html != null) {
             "Email content is required. Provide either text or HTML."
         }

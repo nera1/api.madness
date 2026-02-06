@@ -3,12 +3,13 @@ package api.madn.es
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
-import io.github.cdimascio.dotenv.Dotenv
+import org.springframework.scheduling.annotation.EnableAsync
 
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
- class MadnessApplication
+@EnableAsync
+class MadnessApplication
 
 fun main(args: Array<String>) {
     runApplication<MadnessApplication>(*args)

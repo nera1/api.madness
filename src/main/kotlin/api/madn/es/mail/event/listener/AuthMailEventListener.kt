@@ -19,9 +19,11 @@ class AuthMailEventListener(
     @Async
     fun onEmailVerificationRequested(event: EmailVerificationRequestedEvent) {
         try {
+            val (email, displayName, code) = event
             val mailData = SignupMailData(
-                displayName = event.displayName,
-                to = event.email
+                to = email,
+                displayName = displayName,
+                code = code
             )
             mailService.sendTemplateEmail(mailData)
             log.info("Signup welcome email sent to: ${event.email}")
