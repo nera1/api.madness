@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 
-data class SignInRequest (
+data class SignInRequest(
     @field:NotBlank
     val email: String,
 
@@ -33,3 +33,20 @@ data class SignUpRequest(
     @field:Size(max = 16)
     val displayName: String
 )
+
+data class VerifyEmailRequest(
+    @field:Pattern(
+        regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+        message = "invalid email format"
+    )
+    @field:NotBlank
+    val email: String,
+
+    @field:Size(min = 6, max = 6)
+    @field:Pattern(
+        regexp = "^\\d+$",
+        message = "verification code must contain only digits"
+    )
+    val code: String
+)
+

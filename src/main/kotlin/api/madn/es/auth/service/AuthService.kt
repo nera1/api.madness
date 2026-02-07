@@ -8,6 +8,8 @@ import api.madn.es.auth.data.SignupResponse
 import api.madn.es.auth.exception.EmailDuplicationException
 import api.madn.es.auth.repository.UserCredentialRepository
 import api.madn.es.auth.repository.UserRepository
+import api.madn.es.common.profile.ProfileExecutor
+import api.madn.es.mail.domain.EmailVerificationCode
 import api.madn.es.mail.event.EmailVerificationRequestedEvent
 import api.madn.es.mail.event.VerificationCodeSaveEvent
 import api.madn.es.mail.service.EmailVerificationService
@@ -20,11 +22,11 @@ import org.springframework.transaction.annotation.Transactional
 class AuthService(
     private val userCredentialRepo: UserCredentialRepository,
     private val userRepo: UserRepository,
-    private val passwordEncoder : PasswordEncoder,
+    private val passwordEncoder: PasswordEncoder,
     private val emailVerificationService: EmailVerificationService,
     private val applicationEventPublisher: ApplicationEventPublisher
 ) {
-    private fun emailExists(email: String) : Boolean = userCredentialRepo.existsEmailQuery(email) == 1L
+    private fun emailExists(email: String): Boolean = userCredentialRepo.existsEmailQuery(email) == 1L
 
     @Transactional
     fun signUp(request: SignUpRequest): SignupResponse {
@@ -35,7 +37,15 @@ class AuthService(
 
         val user = userRepo.save(User(displayName))
         val hashed = passwordEncoder.encode(password)
-        userCredentialRepo.save(UserCredential(user.id!!, email, hashed))
+
+        ProfileExecutor.execute {
+            onProduction = {
+                userCredentialRepo.save(UserCredential(user.id!!, email, hashed))
+            }
+            onDev = {
+                devLog("save user credential id: ${user.id} email: $email hashed: $hashed")
+            }
+        }
 
         val verificationCode = emailVerificationService.generateVerificationCode(6)
 
@@ -58,7 +68,7 @@ class AuthService(
     }
 
     @Transactional
-    fun signin(request: SignInRequest) : Unit {
+    fun signin(request: SignInRequest): Unit {
 
     }
 }

@@ -1,5 +1,6 @@
 package api.madn.es.mail.service
 
+import api.madn.es.common.profile.ProfileExecutor
 import api.madn.es.mail.domain.EmailVerificationCode
 import api.madn.es.mail.repository.EmailVerificationCodeRepository
 import org.springframework.stereotype.Service
@@ -21,6 +22,12 @@ class EmailVerificationService(
         )
 
         emailVerificationCodeRepository.save(verificationCode)
+        
+        ProfileExecutor.execute {
+            onDev = {
+                devLog("saving verification code: $code")
+            }
+        }
     }
 
     @Transactional

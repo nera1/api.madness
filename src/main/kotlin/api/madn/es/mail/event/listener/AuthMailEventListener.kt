@@ -26,7 +26,6 @@ class AuthMailEventListener(
                 code = code
             )
             mailService.sendTemplateEmail(mailData)
-            log.info("Signup welcome email sent to: ${event.email}")
         } catch (e: Exception) {
             log.error("Failed to send welcome email to: ${event.email}", e)
         }
