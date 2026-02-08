@@ -11,7 +11,7 @@ class GlobalExceptionHandler {
     @ExceptionHandler(EmailDuplicationException::class)
     fun handleEmailDuplication(ex: CommonException): ResponseEntity<ApiResponse<Nothing>> {
         return ResponseEntity
-            .status(ErrorCode.EAMIL_DUPLICATIE.HttpStatus)
-            .body(ApiResponse.failure(ErrorCode.EAMIL_DUPLICATIE))
+            .status(ErrorCode.EMAIL_DUPLICATE.HttpStatus)
+            .body(ApiResponse.failure(ErrorCode.EMAIL_DUPLICATE))
     }
 }
