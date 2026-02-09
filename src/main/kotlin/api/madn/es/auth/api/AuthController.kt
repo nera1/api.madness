@@ -4,8 +4,11 @@ import api.madn.es.auth.data.SignInRequest
 import api.madn.es.auth.data.SignUpRequest
 import api.madn.es.auth.data.VerifyEmailRequest
 import api.madn.es.auth.service.AuthService
+import api.madn.es.common.exception.CommonException
+import api.madn.es.common.exception.ErrorCode
 import api.madn.es.common.profile.ProfileExecutor
 import api.madn.es.common.response.ApiResponse
+import api.madn.es.mail.service.EmailVerificationService
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -17,14 +20,15 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/auth")
 class AuthController(
     private val authService: AuthService,
+    private val emailVerificationService: EmailVerificationService,
 ) {
     @PostMapping("/signin")
-    fun signIn(@Valid @RequestBody request : SignInRequest): ApiResponse<*> {
+    fun signIn(@Valid @RequestBody request: SignInRequest): ApiResponse<*> {
         return ApiResponse.success(request)
     }
 
     @PostMapping("/signup")
-    fun signUp(@Valid @RequestBody request : SignUpRequest): ApiResponse<*> {
+    fun signUp(@Valid @RequestBody request: SignUpRequest): ApiResponse<*> {
         val user = authService.signUp(request)
         return ApiResponse.success(user)
     }
@@ -36,6 +40,14 @@ class AuthController(
 
     @PostMapping("/email/verification")
     fun verifyEmail(@Valid @RequestBody request: VerifyEmailRequest): ApiResponse<*> {
-        return ApiResponse.success(request)
+        try {
+            val (email, code) = request
+            if(emailVerificationService.verifyCode(email, code)) {
+                return ApiResponse.success(email)
+            }
+            return ApiResponse.failure(ErrorCode.EMAIL_DUPLICATE)
+        } catch (e : CommonException) {
+            return ApiResponse.failure(ErrorCode.EMAIL_DUPLICATE)
+        }
     }
 }
