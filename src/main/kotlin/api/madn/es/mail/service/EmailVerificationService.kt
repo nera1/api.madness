@@ -2,6 +2,10 @@ package api.madn.es.mail.service
 
 import api.madn.es.common.profile.ProfileExecutor
 import api.madn.es.mail.domain.EmailVerificationCode
+import api.madn.es.mail.exception.VerificationCodeAlreadyUsedException
+import api.madn.es.mail.exception.VerificationCodeExpiredException
+import api.madn.es.mail.exception.VerificationCodeMismatchException
+import api.madn.es.mail.exception.VerificationCodeNotFoundException
 import api.madn.es.mail.repository.EmailVerificationCodeRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -31,16 +35,16 @@ class EmailVerificationService(
     }
 
     @Transactional
-    fun verifyCode(email: String, code: String): Boolean {
+    fun verifyCode(email: String, code: String) {
         val verification = emailVerificationCodeRepository
-            .findLatestVerificationCodeByEmail(email) ?: return false
+            .findLatestByEmail(email)
+            ?: throw VerificationCodeNotFoundException()
 
-        if (verification.isExpired()) return false
-        if (verification.isVerified()) return false
-        if (verification.code != code) return false
+        if (verification.isExpired()) throw VerificationCodeExpiredException()
+        if (verification.isVerified()) throw VerificationCodeAlreadyUsedException()
+        if (verification.code != code) throw VerificationCodeMismatchException()
 
         verification.markAsVerified()
-        return true
     }
 
      fun generateVerificationCode(n : Int = 6) : String =

@@ -40,14 +40,7 @@ class AuthController(
 
     @PostMapping("/email/verification")
     fun verifyEmail(@Valid @RequestBody request: VerifyEmailRequest): ApiResponse<*> {
-        try {
-            val (email, code) = request
-            if(emailVerificationService.verifyCode(email, code)) {
-                return ApiResponse.success(email)
-            }
-            return ApiResponse.failure(ErrorCode.EMAIL_DUPLICATE)
-        } catch (e : CommonException) {
-            return ApiResponse.failure(ErrorCode.EMAIL_DUPLICATE)
-        }
+        emailVerificationService.verifyCode(request.email, request.code)
+        return ApiResponse.success(request.email)
     }
 }
