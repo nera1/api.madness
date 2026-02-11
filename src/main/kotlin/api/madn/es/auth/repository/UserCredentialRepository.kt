@@ -16,7 +16,7 @@ interface UserCredentialRepository : JpaRepository<UserCredential, Long> {
             )
         """
     )
-    fun existsEmailQuery(@Param("email") email: String): Long
+    fun existsEmail(@Param("email") email: String): Long
 
     @Query(
         nativeQuery = true,
@@ -24,5 +24,5 @@ interface UserCredentialRepository : JpaRepository<UserCredential, Long> {
             SELECT * FROM user_credentials WHERE email = :email
         """
     )
-    fun findByEmailQuery(@Param("email") email: String): UserCredential?
+    fun findByEmail(@Param("email") email: String): UserCredential?
 }
