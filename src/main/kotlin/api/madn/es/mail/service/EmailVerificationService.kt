@@ -1,6 +1,9 @@
+// src/main/kotlin/api/madn/es/mail/service/EmailVerificationService.kt
 package api.madn.es.mail.service
 
 import api.madn.es.auth.domain.UserStatus
+import api.madn.es.auth.exception.UserCredentialNotFoundException
+import api.madn.es.auth.exception.UserNotFoundException
 import api.madn.es.auth.repository.UserCredentialRepository
 import api.madn.es.auth.repository.UserRepository
 import api.madn.es.common.profile.ProfileExecutor
@@ -19,10 +22,10 @@ import kotlin.random.Random
 class EmailVerificationService(
     private val emailVerificationCodeRepository: EmailVerificationCodeRepository,
     private val userCredentialRepository: UserCredentialRepository,
-    private val userRepository: UserRepository,
+    private val userRepository: UserRepository
 ) {
     @Transactional
-    fun saveEmailVerificationCode(email: String, code : String) {
+    fun saveEmailVerificationCode(email: String, code: String) {
         val expiresAt = LocalDateTime.now().plusMinutes(10)
 
         val verificationCode = EmailVerificationCode(
@@ -32,6 +35,12 @@ class EmailVerificationService(
         )
 
         emailVerificationCodeRepository.save(verificationCode)
+
+        ProfileExecutor.execute {
+            onDev = {
+                devLog("saving verification code: $code")
+            }
+        }
     }
 
     @Transactional
@@ -46,8 +55,13 @@ class EmailVerificationService(
 
         verification.markAsVerified()
 
-        val credential = userCredentialRepository.findByEmail(email) ?: throw IllegalStateException("Credential not found")
-        val user = userRepository.findById(credential.userId).orElseThrow { IllegalStateException("User not found") }
+        val credential = userCredentialRepository.findByEmail(email)
+            ?: throw UserCredentialNotFoundException()
+
+        val user = userRepository.findById(credential.userId).orElseThrow {
+            UserNotFoundException()
+        }
+
         user.status = UserStatus.ACTIVE
     }
 

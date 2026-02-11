@@ -6,3 +6,5 @@ class VerificationCodeNotFoundException : CommonException("Verification code not
 class VerificationCodeExpiredException : CommonException("Verification code expired")
 class VerificationCodeAlreadyUsedException : CommonException("Verification code already used")
 class VerificationCodeMismatchException : CommonException("Verification code does not match")
+class MailConfigurationException(message: String) : CommonException(message)
+class EmailContentRequiredException(message: String) : CommonException(message)

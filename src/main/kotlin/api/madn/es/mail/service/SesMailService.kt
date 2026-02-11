@@ -1,6 +1,8 @@
 package api.madn.es.mail.service
 
 import api.madn.es.mail.data.MailTemplateData
+import api.madn.es.mail.exception.EmailContentRequiredException
+import api.madn.es.mail.exception.MailConfigurationException
 import api.madn.es.mail.renderer.ThymeleafMailTemplateRenderer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -19,11 +21,12 @@ class SesMailService(
     private val renderer: ThymeleafMailTemplateRenderer
 ) {
     fun sendEmail(to: String, subject: String, html: String? = null, text: String? = null) {
-        require(text != null || html != null) {
-            "Email content is required. Provide either text or HTML."
+        if (text == null && html == null) {
+            throw EmailContentRequiredException("Email content is required. Provide either text or HTML.")
         }
-        require(from.isNotBlank()) {
-            "MAIL_FROM environment variable is not configured."
+
+        if (from.isBlank()) {
+            throw MailConfigurationException("MAIL_FROM environment variable is not configured.")
         }
 
         val bodyBuilder = Body.builder()
