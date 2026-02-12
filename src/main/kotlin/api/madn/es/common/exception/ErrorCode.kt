@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus
 enum class ErrorCode(
     val code : String,
     val message: String,
-    val HttpStatus: HttpStatus
+    val httpStatus: HttpStatus
 ) {
     EMAIL_DUPLICATE("AUTH_001", "Email in use", HttpStatus.CONFLICT),
     USER_CREDENTIAL_NOT_FOUND("AUTH_002", "", HttpStatus.NOT_FOUND),
