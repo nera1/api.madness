@@ -2,9 +2,9 @@ CREATE TABLE refresh_tokens
 (
     id         BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     user_id    BIGINT UNSIGNED NOT NULL,
-    token_hash VARCHAR(64)                            NOT NULL,
-    expires_at TIMESTAMP                              NOT NULL,
-    create_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
+    token_hash VARCHAR(64)  NOT NULL,
+    expires_at TIMESTAMP    NOT NULL,
+    created_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
 
     PRIMARY KEY (id),
     UNIQUE KEY uk_refresh_token_hash(token_hash),
