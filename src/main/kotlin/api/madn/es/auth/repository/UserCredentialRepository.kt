@@ -21,7 +21,7 @@ interface UserCredentialRepository : JpaRepository<UserCredential, Long> {
     @Query(
         nativeQuery = true,
         value = """
-            SELECT cast(user_credentials as ) FROM user_credentials WHERE email = :email
+            SELECT * FROM user_credentials WHERE email = :email
         """
     )
     fun findByEmail(@Param("email") email: String): UserCredential?
