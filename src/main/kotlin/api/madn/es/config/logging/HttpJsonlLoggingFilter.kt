@@ -1,5 +1,6 @@
 package api.madn.es.config.logging
 
+import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import jakarta.servlet.FilterChain
@@ -23,6 +24,7 @@ import java.util.concurrent.atomic.AtomicLong
 class HttpJsonlLoggingFilter(
     private val props: HttpJsonlProperties,
     private val objectMapper: ObjectMapper = jacksonObjectMapper()
+        .configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, false)
 ) : OncePerRequestFilter() {
 
     private val log = LoggerFactory.getLogger(javaClass)

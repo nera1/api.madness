@@ -1,14 +1,14 @@
 package api.madn.es.auth.api
 
 import api.madn.es.auth.data.SignInRequest
+import api.madn.es.auth.data.SignInResponse
 import api.madn.es.auth.data.SignUpRequest
 import api.madn.es.auth.data.VerifyEmailRequest
 import api.madn.es.auth.service.AuthService
-import api.madn.es.common.exception.CommonException
-import api.madn.es.common.exception.ErrorCode
-import api.madn.es.common.profile.ProfileExecutor
+import api.madn.es.auth.service.JwtService
 import api.madn.es.common.response.ApiResponse
 import api.madn.es.mail.service.EmailVerificationService
+import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -21,10 +21,16 @@ import org.springframework.web.bind.annotation.RestController
 class AuthController(
     private val authService: AuthService,
     private val emailVerificationService: EmailVerificationService,
+    private val jwtService: JwtService,
 ) {
     @PostMapping("/signin")
-    fun signIn(@Valid @RequestBody request: SignInRequest): ApiResponse<*> {
-        return ApiResponse.success(request)
+    fun signIn(
+        @Valid @RequestBody request: SignInRequest,
+        response: HttpServletResponse,
+    ): ApiResponse<SignInResponse> {
+        val result = authService.signIn(request)
+        jwtService.setTokenCookies(response, result.accessToken, result.refreshToken)
+        return ApiResponse.success(SignInResponse(email = result.email, displayName = result.displayName))
     }
 
     @PostMapping("/signup")

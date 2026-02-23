@@ -63,8 +63,8 @@ class AuthService(
         return SignupResponse(user.id!!, email, displayName)
     }
 
-    @Transactional(readOnly = true)
-    fun signin(request: SignInRequest): SignInResult {
+    @Transactional
+    fun signIn(request: SignInRequest): SignInResult {
         val (email, password) = request
 
         val credential = userCredentialRepo.findByEmail(email)

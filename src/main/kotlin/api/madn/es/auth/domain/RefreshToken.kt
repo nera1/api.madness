@@ -25,7 +25,7 @@ open class RefreshToken(
     open var id: Long? = null
         protected set
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
     open var createdAt: LocalDateTime? = null
 
     fun isExpired(): Boolean = LocalDateTime.now().isAfter(expiresAt)
