@@ -43,7 +43,11 @@ jobs:
                 - name: AWS_SECRET_ACCESS_KEY
                   value: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                 - name: MAIL_FROM
-                  value: ${{ secrets.MAIL_FROM }}            
+                  value: ${{ secrets.MAIL_FROM }}
+                - name: JWT_SECRET
+                  value: ${{ secrets.JWT_SECRET }}
+                - name: COOKIE_DOMAIN
+                  value: ${{ secrets.COOKIE_DOMAIN }}
               buildenv: []
             context:
               git:
