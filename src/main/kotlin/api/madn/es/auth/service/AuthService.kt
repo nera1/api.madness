@@ -10,6 +10,7 @@ import api.madn.es.auth.domain.UserStatus
 import api.madn.es.auth.exception.EmailDuplicationException
 import api.madn.es.auth.exception.EmailNotVerifiedException
 import api.madn.es.auth.exception.InvalidCredentialsException
+import api.madn.es.auth.exception.UserCredentialNotFoundException
 import api.madn.es.auth.repository.UserCredentialRepository
 import api.madn.es.auth.repository.UserRepository
 import api.madn.es.mail.event.EmailVerificationRequestedEvent
@@ -93,5 +94,13 @@ class AuthService(
             email = email,
             displayName = user.displayName ?: ""
         )
+    }
+
+    @Transactional(readOnly = true)
+    fun refreshAccessToken(refreshToken: String): String {
+        val tokenEntity = jwtService.validateRefreshToken(refreshToken)
+        val credential = userCredentialRepo.findByUserId(tokenEntity.userId)
+            ?: throw UserCredentialNotFoundException()
+        return jwtService.generateAccessToken(tokenEntity.userId, credential.email)
     }
 }

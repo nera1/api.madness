@@ -4,10 +4,12 @@ import api.madn.es.auth.data.SignInRequest
 import api.madn.es.auth.data.SignInResponse
 import api.madn.es.auth.data.SignUpRequest
 import api.madn.es.auth.data.VerifyEmailRequest
+import api.madn.es.auth.exception.RefreshTokenNotFoundException
 import api.madn.es.auth.service.AuthService
 import api.madn.es.auth.service.JwtService
 import api.madn.es.common.response.ApiResponse
 import api.madn.es.mail.service.EmailVerificationService
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.GetMapping
@@ -42,6 +44,19 @@ class AuthController(
     @GetMapping("/signout")
     fun signOut(): ApiResponse<*> {
         return ApiResponse.success("signout")
+    }
+
+    @PostMapping("/refresh")
+    fun refresh(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+    ): ApiResponse<String> {
+        val refreshToken = request.cookies?.find { it.name == "refresh_token" }?.value
+            ?: throw RefreshTokenNotFoundException()
+
+        val newAccessToken = authService.refreshAccessToken(refreshToken)
+        jwtService.setAccessTokenCookie(response, newAccessToken)
+        return ApiResponse.success("Token refreshed")
     }
 
     @PostMapping("/email/verification")

@@ -25,4 +25,6 @@ interface UserCredentialRepository : JpaRepository<UserCredential, Long> {
         """
     )
     fun findByEmail(@Param("email") email: String): UserCredential?
+
+    fun findByUserId(userId: Long): UserCredential?
 }

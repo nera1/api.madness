@@ -16,6 +16,7 @@ import api.madn.es.mail.exception.VerificationCodeAlreadyUsedException
 import api.madn.es.mail.exception.VerificationCodeExpiredException
 import api.madn.es.mail.exception.VerificationCodeMismatchException
 import api.madn.es.mail.exception.VerificationCodeNotFoundException
+import api.madn.es.slide.exception.UnauthorizedSlideException
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -113,6 +114,14 @@ class GlobalExceptionHandler {
         ResponseEntity
             .status(ErrorCode.EMAIL_CONTENT_REQUIRED.httpStatus)
             .body(ApiResponse.failure(ErrorCode.EMAIL_CONTENT_REQUIRED))
+
+    // ── Slide ───────────────────────────────────────────────────────────
+
+    @ExceptionHandler(UnauthorizedSlideException::class)
+    fun handleUnauthorizedSlide(ex: UnauthorizedSlideException): ResponseEntity<ApiResponse<Nothing>> =
+        ResponseEntity
+            .status(ErrorCode.UNAUTHORIZED_SLIDE.httpStatus)
+            .body(ApiResponse.failure(ErrorCode.UNAUTHORIZED_SLIDE))
 
     // ── Common ────────────────────────────────────────────────────────────
 

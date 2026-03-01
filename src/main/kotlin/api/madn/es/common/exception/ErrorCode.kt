@@ -24,6 +24,8 @@ enum class ErrorCode(
     MAIL_CONFIGURATION_ERROR("MAIL_005", "Mail configuration error", HttpStatus.INTERNAL_SERVER_ERROR),
     EMAIL_CONTENT_REQUIRED("MAIL_006", "Email content is required", HttpStatus.BAD_REQUEST),
 
+    UNAUTHORIZED_SLIDE("SLIDE_001", "Authentication required", HttpStatus.UNAUTHORIZED),
+
     VALIDATION_ERROR("COMMON_001", "Validation failed", HttpStatus.BAD_REQUEST),
     INTERNAL_SERVER_ERROR("COMMON_002", "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
 }

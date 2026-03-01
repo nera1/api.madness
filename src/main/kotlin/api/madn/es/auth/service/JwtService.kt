@@ -119,6 +119,13 @@ class JwtService(
         )
     }
 
+    fun setAccessTokenCookie(response: HttpServletResponse, accessToken: String) {
+        response.addHeader(
+            "Set-Cookie",
+            buildCookieHeader("access_token", accessToken, "/", jwtProperties.accessTokenExpiry.toInt())
+        )
+    }
+
     fun clearTokenCookies(response: HttpServletResponse) {
         response.addHeader("Set-Cookie", buildCookieHeader("access_token", "", "/", 0))
         response.addHeader("Set-Cookie", buildCookieHeader("refresh_token", "", "/auth", 0))

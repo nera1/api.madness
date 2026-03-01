@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker ps --format \"{{.Names}}\")",
+      "Bash(docker exec local-mysql mysql -u app_local -papp_local_pw madness_local -e \"SHOW TABLES LIKE ''%post%''; SHOW TABLES LIKE ''%slide%''; SELECT version, description, success FROM flyway_schema_history WHERE version IN \\(''6'',''7''\\);\")",
+      "Bash(docker exec local-mysql mysql -u app_local -papp_local_pw madness_local -e \"SHOW CREATE TABLE slides\\\\G\")",
+      "Bash(docker exec local-mysql mysql -u app_local -papp_local_pw madness_local -e \":*)",
+      "Bash(python3 -c \":*)",
+      "Bash(python -c \":*)"
+    ]
+  }
+}
