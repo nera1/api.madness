@@ -1,42 +1,35 @@
-package api.madn.es.slide.domain
+package api.madn.es.project.domain
 
-import api.madn.es.project.domain.Project
+import api.madn.es.slide.domain.Slide
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
+import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "slides")
-open class Slide(
+@Table(name = "projects")
+open class Project(
     @Column(name = "user_id", nullable = false)
     open var userId: Long = 0,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id")
-    open var project: Project? = null,
-
-    @Column(name = "sort_order", nullable = false)
-    open var sortOrder: Int = 0,
-
-    @Column(name = "headline_text", nullable = false, length = 512)
-    open var headlineText: String = "",
-
-    @Column(name = "headline_level", nullable = false, length = 4)
-    open var headlineLevel: String = "p",
-
-    @Column(name = "body", nullable = false, columnDefinition = "JSON")
-    open var body: String = "{}",
+    @Column(name = "title", nullable = false, length = 255)
+    open var title: String = "",
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     open var id: Long? = null
+        protected set
+
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @OrderBy("sortOrder ASC")
+    open var slides: MutableList<Slide> = mutableListOf()
         protected set
 
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false)

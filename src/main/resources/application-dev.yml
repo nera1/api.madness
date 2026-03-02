@@ -26,7 +26,7 @@ app:
 
 logging:
   pattern:
-    console: "%level %msg%n"
+    console: "%level %msg%n%ex"
 
 mail:
   from: ${MAIL_FROM}

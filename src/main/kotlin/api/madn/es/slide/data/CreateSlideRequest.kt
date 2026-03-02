@@ -4,6 +4,8 @@ import jakarta.validation.Valid
 import jakarta.validation.constraints.NotNull
 
 data class CreateSlideRequest(
+    val projectId: Long? = null,
+
     @field:Valid
     @field:NotNull
     val headline: Headline,

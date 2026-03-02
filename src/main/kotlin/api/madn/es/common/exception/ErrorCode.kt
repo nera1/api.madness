@@ -25,6 +25,12 @@ enum class ErrorCode(
     EMAIL_CONTENT_REQUIRED("MAIL_006", "Email content is required", HttpStatus.BAD_REQUEST),
 
     UNAUTHORIZED_SLIDE("SLIDE_001", "Authentication required", HttpStatus.UNAUTHORIZED),
+    SLIDE_NOT_FOUND("SLIDE_002", "Slide not found", HttpStatus.NOT_FOUND),
+    SLIDE_ACCESS_DENIED("SLIDE_003", "You do not have access to this slide", HttpStatus.FORBIDDEN),
+
+    UNAUTHORIZED_PROJECT("PROJECT_001", "Authentication required", HttpStatus.UNAUTHORIZED),
+    PROJECT_NOT_FOUND("PROJECT_002", "Project not found", HttpStatus.NOT_FOUND),
+    PROJECT_ACCESS_DENIED("PROJECT_003", "You do not have access to this project", HttpStatus.FORBIDDEN),
 
     VALIDATION_ERROR("COMMON_001", "Validation failed", HttpStatus.BAD_REQUEST),
     INTERNAL_SERVER_ERROR("COMMON_002", "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
