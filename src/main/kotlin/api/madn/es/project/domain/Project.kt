@@ -1,15 +1,15 @@
 package api.madn.es.project.domain
 
+import api.madn.es.common.TsidGenerator
 import api.madn.es.slide.domain.Slide
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OrderBy
+import jakarta.persistence.PrePersist
 import jakarta.persistence.Table
 import java.time.LocalDateTime
 
@@ -23,7 +23,6 @@ open class Project(
     open var title: String = "",
 ) {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     open var id: Long? = null
         protected set
 
@@ -39,4 +38,9 @@ open class Project(
     @Column(name = "updated_at", nullable = false, insertable = false, updatable = false)
     open var updatedAt: LocalDateTime? = null
         protected set
+
+    @PrePersist
+    fun prePersist() {
+        if (id == null) id = TsidGenerator.next()
+    }
 }

@@ -1,14 +1,14 @@
 package api.madn.es.slide.domain
 
+import api.madn.es.common.TsidGenerator
 import api.madn.es.project.domain.Project
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.PrePersist
 import jakarta.persistence.Table
 import java.time.LocalDateTime
 
@@ -35,7 +35,6 @@ open class Slide(
     open var body: String = "{}",
 ) {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     open var id: Long? = null
         protected set
 
@@ -46,4 +45,9 @@ open class Slide(
     @Column(name = "updated_at", nullable = false, insertable = false, updatable = false)
     open var updatedAt: LocalDateTime? = null
         protected set
+
+    @PrePersist
+    fun prePersist() {
+        if (id == null) id = TsidGenerator.next()
+    }
 }

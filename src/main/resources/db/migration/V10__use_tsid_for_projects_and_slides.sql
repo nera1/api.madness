@@ -1,0 +1,10 @@
+-- projects.id 수정 전 참조하는 FK 제거
+ALTER TABLE slides DROP FOREIGN KEY fk_slides_project;
+
+-- AUTO_INCREMENT 제거 (TSID로 앱에서 생성)
+ALTER TABLE projects MODIFY COLUMN id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE slides MODIFY COLUMN id BIGINT UNSIGNED NOT NULL;
+
+-- FK 복원
+ALTER TABLE slides ADD CONSTRAINT fk_slides_project FOREIGN KEY (project_id) REFERENCES projects (id)
+    ON DELETE SET NULL ON UPDATE CASCADE;

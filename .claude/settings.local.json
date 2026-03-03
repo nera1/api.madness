@@ -45,7 +45,8 @@
       "Bash(docker exec local-mysql mysql -u root -e \"CREATE DATABASE IF NOT EXISTS madness_local;\")",
       "Bash(docker exec local-mysql mysql -u app_local -papp_local_pw -e \"CREATE DATABASE IF NOT EXISTS madness_local;\")",
       "Bash(ss -tlnp)",
-      "Bash(taskkill //PID 32872 //F)"
+      "Bash(taskkill //PID 32872 //F)",
+      "Bash(docker exec local-mysql mysql -u app_local -papp_local_pw -e \"DROP DATABASE madness_local; CREATE DATABASE madness_local;\")"
     ]
   }
 }
