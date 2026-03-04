@@ -6,6 +6,7 @@ import api.madn.es.project.repository.ProjectRepository
 import api.madn.es.slide.data.CreateSlideRequest
 import api.madn.es.slide.data.CreateSlideResponse
 import api.madn.es.slide.data.SlideResponse
+import api.madn.es.slide.data.UpdateSlideRequest
 import api.madn.es.slide.domain.Slide
 import api.madn.es.slide.exception.SlideAccessDeniedException
 import api.madn.es.slide.exception.SlideNotFoundException
@@ -77,5 +78,44 @@ class SlideService(
             createdAt = slide.createdAt,
             updatedAt = slide.updatedAt,
         )
+    }
+
+    @Transactional
+    fun updateSlide(userId: Long, slideId: Long, request: UpdateSlideRequest): SlideResponse {
+        val slide = slideRepository.findById(slideId)
+            .orElseThrow { SlideNotFoundException() }
+
+        if (slide.userId != userId) {
+            throw SlideAccessDeniedException()
+        }
+
+        slide.headlineText = request.headline.text
+        slide.headlineLevel = request.headline.level
+        slide.body = objectMapper.writeValueAsString(request.body)
+
+        val saved = slideRepository.save(slide)
+
+        return SlideResponse(
+            id = saved.id!!,
+            headline = SlideResponse.Headline(
+                text = saved.headlineText,
+                level = saved.headlineLevel,
+            ),
+            body = objectMapper.readTree(saved.body),
+            createdAt = saved.createdAt,
+            updatedAt = saved.updatedAt,
+        )
+    }
+
+    @Transactional
+    fun deleteSlide(userId: Long, slideId: Long) {
+        val slide = slideRepository.findById(slideId)
+            .orElseThrow { SlideNotFoundException() }
+
+        if (slide.userId != userId) {
+            throw SlideAccessDeniedException()
+        }
+
+        slideRepository.delete(slide)
     }
 }

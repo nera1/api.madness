@@ -7,6 +7,7 @@ import api.madn.es.project.domain.Project
 import api.madn.es.project.exception.ProjectAccessDeniedException
 import api.madn.es.project.exception.ProjectNotFoundException
 import api.madn.es.project.repository.ProjectRepository
+import api.madn.es.slide.domain.Slide
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -23,12 +24,19 @@ class ProjectService(
             title = request.title,
         )
 
+        val defaultSlide = Slide(
+            userId = userId,
+            project = project,
+            sortOrder = 0,
+        )
+        project.slides.add(defaultSlide)
+
         val saved = projectRepository.save(project)
 
         return ProjectResponse(
             id = saved.id!!,
             title = saved.title,
-            slideCount = 0,
+            slideCount = saved.slides.size,
             createdAt = saved.createdAt,
             updatedAt = saved.updatedAt,
         )
