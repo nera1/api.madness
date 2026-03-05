@@ -40,6 +40,9 @@ out/
 ### Logs ###
 /logs/
 
+### Claude ###
+.claude/
+
 ### env ###
 .env
 /docker/local/.env
