@@ -1,3 +1,6 @@
 spring:
   profiles:
     active: ${ACTIVE_PROFILES:dev}
+  web:
+    resources:
+      add-mappings: false
