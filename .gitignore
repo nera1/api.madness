@@ -46,3 +46,6 @@ out/
 ### env ###
 .env
 /docker/local/.env
+
+### Windows reserved device names ###
+nul
